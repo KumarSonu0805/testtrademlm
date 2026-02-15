@@ -102,10 +102,10 @@ defined('INVOICE_PREFIX')      OR define('INVOICE_PREFIX','RP'); //Prefix
 //////////////////////////////////////////////
 /*--------------Template Colors-------------*/
 //////////////////////////////////////////////
-defined('ACCENT_COLOR')        OR define('ACCENT_COLOR',"accent-white");
-defined('NAVBAR_COLOR')        OR define('NAVBAR_COLOR',"navbar-primary navbar-theme");
-defined('BRAND_COLOR')         OR define('BRAND_COLOR',"navbar-primary");
-defined('SIDEBAR_COLOR')       OR define('SIDEBAR_COLOR',"sidebar-dark-theme");
+defined('ACCENT_COLOR')        OR define('ACCENT_COLOR',"accent-warning");
+defined('NAVBAR_COLOR')        OR define('NAVBAR_COLOR',"navbar-success navbar-theme");
+defined('BRAND_COLOR')         OR define('BRAND_COLOR',"navbar-success");
+defined('SIDEBAR_COLOR')       OR define('SIDEBAR_COLOR',"sidebar-dark-warning text-white");
 //////////////////////////////////////////////
 
 defined('ADMIN_CHARGE')           OR define('ADMIN_CHARGE',5); //ADMIN_CHARGE
@@ -132,6 +132,6 @@ if(isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']=='localhost'){
 else{
 	defined('DB_HOST')      ? null : define('DB_HOST', '127.0.0.1');
 	defined('DB_USER')      ? null : define('DB_USER', 'u711511560_user_testmlm');
-	defined('DB_PASSWORD')  ? null : define('DB_PASSWORD', 'TestTradeMlm@123#');
+	defined('DB_PASSWORD')  ? null : define('DB_PASSWORD', 'TestTradeMlm@123#$');
 	defined('DB_NAME')      ? null : define('DB_NAME', 'u711511560_db_testmlm');
 }

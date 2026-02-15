@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 21, 2024 at 07:06 AM
+-- Generation Time: Feb 15, 2026 at 02:51 PM
 -- Server version: 10.4.19-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,12 +18,34 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `db_devixcapital`
+-- Database: `db_greentrade`
 --
 
+DELIMITER $$
 --
 -- Functions
 --
+CREATE DEFINER=`root`@`localhost` FUNCTION `GetAncestry` (`GivenID` INT) RETURNS VARCHAR(1024) CHARSET utf8mb4 BEGIN
+    DECLARE rv VARCHAR(1024);
+    DECLARE cm CHAR(1);
+    DECLARE ch INT;
+
+    SET rv = '';
+    SET cm = '';
+    SET ch = GivenID;
+    WHILE ch > 1 DO
+        SELECT IFNULL(refid,-1) INTO ch FROM
+        (SELECT refid FROM dc_members WHERE regid = ch) A;
+        IF ch > 1 THEN
+            SET rv = CONCAT(rv,cm,ch);
+            SET cm = ',';
+        END IF;
+    END WHILE;
+    RETURN rv;
+END$$
+
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -46,9 +68,12 @@ CREATE TABLE `dc_acc_details` (
   `address` varchar(500) NOT NULL,
   `pan` varchar(100) NOT NULL,
   `fund_id` varchar(30) DEFAULT NULL,
-  `vpa_fund_id` varchar(30) DEFAULT NULL,
+  `reason` varchar(200) DEFAULT NULL,
+  `remarks` text NOT NULL,
   `cheque` varchar(100) NOT NULL,
-  `kyc` tinyint(1) NOT NULL DEFAULT 0
+  `kyc` tinyint(1) NOT NULL DEFAULT 0,
+  `added_on` datetime DEFAULT NULL,
+  `updated_on` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -908,6 +933,29 @@ CREATE TABLE `dc_contact` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `dc_deposits`
+--
+
+CREATE TABLE `dc_deposits` (
+  `id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `type` varchar(10) NOT NULL,
+  `trans_type` varchar(20) NOT NULL,
+  `package_id` int(11) NOT NULL,
+  `regid` int(11) NOT NULL,
+  `amount` float NOT NULL,
+  `details` varchar(200) NOT NULL,
+  `image` varchar(200) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 0,
+  `complete` tinyint(1) NOT NULL DEFAULT 0,
+  `approved_on` datetime DEFAULT NULL,
+  `added_on` datetime NOT NULL,
+  `updated_on` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `dc_epins`
 --
 
@@ -933,12 +981,15 @@ CREATE TABLE `dc_epin_requests` (
   `extra` int(11) NOT NULL,
   `package_id` int(11) NOT NULL,
   `type` varchar(10) NOT NULL,
+  `trans_type` varchar(20) NOT NULL,
   `amount` float(14,2) NOT NULL,
   `date` date NOT NULL,
   `details` text NOT NULL,
   `image` varchar(255) DEFAULT NULL,
   `approve_date` date DEFAULT NULL,
-  `status` int(1) NOT NULL
+  `reason` varchar(100) NOT NULL,
+  `status` int(1) NOT NULL,
+  `updated_on` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -949,6 +1000,7 @@ CREATE TABLE `dc_epin_requests` (
 
 CREATE TABLE `dc_epin_transfer` (
   `id` int(11) NOT NULL,
+  `type` varchar(10) NOT NULL DEFAULT 'transfer',
   `reg_from` int(11) NOT NULL,
   `reg_to` int(11) NOT NULL,
   `epin_id` int(11) NOT NULL,
@@ -1023,6 +1075,8 @@ CREATE TABLE `dc_members` (
   `address` varchar(255) NOT NULL,
   `district` varchar(30) NOT NULL,
   `state` varchar(30) NOT NULL,
+  `state_id` int(11) NOT NULL,
+  `district_id` int(11) NOT NULL,
   `country` varchar(50) NOT NULL,
   `pincode` varchar(6) NOT NULL,
   `photo` varchar(200) NOT NULL,
@@ -1135,18 +1189,6 @@ CREATE TABLE `dc_packages` (
   `club_id` int(11) NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `dc_packages`
---
-
-INSERT INTO `dc_packages` (`id`, `package`, `type`, `amount`, `direct`, `daily_bonus`, `discount`, `min_withdrawal`, `max_withdrawal`, `club_id`, `status`) VALUES
-(1, 'P-125', 'joining', 125.00, 0, 0, 0, 50, 0, 0, 1),
-(2, 'P-250', 'joining', 250.00, 0, 0, 0, 50, 0, 0, 1),
-(3, 'P-625', 'joining', 625.00, 0, 0, 0, 50, 0, 0, 1),
-(4, 'P-1250', 'joining', 1250.00, 0, 0, 0, 50, 0, 0, 1),
-(5, 'P-2500', 'joining', 2500.00, 0, 0, 0, 50, 0, 0, 1),
-(6, 'P-6250', 'joining', 6250.00, 0, 0, 0, 50, 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -1261,7 +1303,7 @@ CREATE TABLE `dc_users` (
 --
 
 INSERT INTO `dc_users` (`id`, `username`, `mobile`, `name`, `email`, `password`, `vp`, `role`, `salt`, `otp`, `txn_password`, `token`, `photo`, `status`, `created_on`, `updated_on`) VALUES
-(1, 'admin', '7894561230', 'Admin', 'admin@gmail.com', '$2y$10$wWhfg8Im4Ol33OAgiTMkieh0YgnYAJcSS33HVxXbMFmusAeubcYha', '12345', 'admin', 'MOvosy97ax56IkQD', '', '', '', '', 1, '2020-01-07 17:05:51', '2024-08-20 19:24:02');
+(1, 'admin', '7894561230', 'Admin', 'admin@gmail.com', '$2y$10$Lg5BcTl6Db9UkQKXYcdtEe4Vgydny.idN782s6VKDtTaRgkth0jHa', '12345', 'admin', 'MOvosy97ax56IkQD', '', '', '', '', 1, '2020-01-07 17:05:51', '2025-08-02 00:08:57');
 
 -- --------------------------------------------------------
 
@@ -1278,14 +1320,14 @@ CREATE TABLE `dc_wallet` (
   `package_id` int(11) NOT NULL,
   `members` int(11) NOT NULL,
   `member_id` int(11) NOT NULL,
-  `club_id` int(11) NOT NULL,
-  `ci_id` int(11) NOT NULL,
+  `deposit_id` int(11) NOT NULL,
+  `roi_income` decimal(16,3) NOT NULL,
   `ads` int(11) NOT NULL,
   `ad_rate` float(16,2) NOT NULL,
   `percent` float NOT NULL,
   `royalty_id` int(11) NOT NULL,
   `renewal_id` int(11) NOT NULL,
-  `amount` float(16,2) NOT NULL,
+  `amount` decimal(16,3) NOT NULL,
   `remarks` varchar(50) NOT NULL,
   `added_on` datetime NOT NULL,
   `updated_on` datetime NOT NULL
@@ -1317,6 +1359,7 @@ CREATE TABLE `dc_wallet_transfers` (
 CREATE TABLE `dc_withdrawals` (
   `id` int(11) NOT NULL,
   `regid` int(11) NOT NULL,
+  `trans_type` varchar(20) NOT NULL,
   `date` date NOT NULL,
   `amount` float(16,2) NOT NULL,
   `tds` float(16,2) NOT NULL,
@@ -1358,6 +1401,12 @@ ALTER TABLE `dc_banks`
 -- Indexes for table `dc_contact`
 --
 ALTER TABLE `dc_contact`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `dc_deposits`
+--
+ALTER TABLE `dc_deposits`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1530,6 +1579,12 @@ ALTER TABLE `dc_contact`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `dc_deposits`
+--
+ALTER TABLE `dc_deposits`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `dc_epins`
 --
 ALTER TABLE `dc_epins`
@@ -1605,7 +1660,7 @@ ALTER TABLE `dc_nominee`
 -- AUTO_INCREMENT for table `dc_packages`
 --
 ALTER TABLE `dc_packages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `dc_renewals`
@@ -1641,7 +1696,7 @@ ALTER TABLE `dc_tokens`
 -- AUTO_INCREMENT for table `dc_users`
 --
 ALTER TABLE `dc_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `dc_wallet`
