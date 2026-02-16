@@ -130,7 +130,7 @@ class Login extends MY_Controller {
 				$userdata['status']="1";
 				
 				$memberdata['name']=$data['name'];
-				$memberdata['wallet_address']=!empty($data['wallet_address'])?$data['wallet_address']:'';
+				$memberdata['wallet_address']=!empty($data['wallet_address'])?$data['wallet_address']:NULL;
 				$memberdata['refid']=$referrer['id'];
 				$memberdata['date']=date('Y-m-d');
 				$memberdata['time']=date('H:i:s');
