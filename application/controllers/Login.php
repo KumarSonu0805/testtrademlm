@@ -1,48 +1,59 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Login extends CI_Controller {
-	function __construct(){
-		parent::__construct();
-        logrequest();
-	}
-	
-	public function index(){
-		loginredirect();
+class Login extends MY_Controller {
+    
+    public function __construct() {
+        parent::__construct();
+        // Load global models, check auth, etc.
+    }
+    
+    public function index(){
+        loginredirect();
 		$this->session->unset_userdata("username");
-		$data['title']="Login";
-		$data['body_class']="login-page";
-		$this->load->view('includes/top-section',$data);
-		$this->load->view('pages/login');
-	}
-	
-	public function forgotpassword(){
+        if($this->session->flashdata('msg')=='Registered Successfully!'){
+            $user=getuser();
+            $member=$this->member->getmemberdetails($user['id']);
+            $data['user']=$user;
+            $data['member']=$member;
+        }
+        $data['title']="Login";
+        $this->template->load('auth','walletlogin',$data,'auth');       
+    }
+    
+    public function register(){
+        $data['title']="Register";
+        $this->template->load('auth','register',$data,'auth');       
+    }
+    
+    public function adminlogin(){
+        loginredirect();
 		$this->session->unset_userdata("username");
-		$data['title']="Forgot Password";
-		$data['body_class']="login-page";
-		$this->load->view('includes/top-section',$data);
-		$this->load->view('pages/forgotpassword');
-	}
-	
-	public function enterotp(){
+        $data['title']="Login";
+        $this->template->load('auth','login',$data,'auth');       
+    }
+    
+    /*public function forgotpassword(){
+		$this->session->unset_userdata("username");
+        $data['title']="Forgot Password";
+        $this->template->load('auth','forgotpassword',$data,'auth');       
+    }
+    
+    public function enterotp(){
 		if($this->session->userdata('username')===NULL){redirect('login/');}
-		$data['title']="Enter OTP";
-		$data['body_class']="login-page";
-		$this->load->view('includes/top-section',$data);
-		$this->load->view('pages/enterotp');
-	}
-	
-	public function resetpassword(){
+        $data['title']="Forgot Password";
+        $this->template->load('auth','enterotp',$data,'auth');       
+    }
+    
+    public function resetpassword(){
 		if($this->session->username===NULL){redirect('login/');}
-		$data['title']="Reset Password";
-		$data['body_class']="login-page";
-		$this->load->view('includes/top-section',$data);
-		$this->load->view('pages/resetpassword');
-	}
-	
+        $data['title']="Change Password";
+        $this->template->load('auth','resetpassword',$data,'auth');    
+    }*/
+    
 	public function logout(){
 		if($this->session->user!==NULL){
-			$data=array("user","name","username","role","project","sess_type");
+			$data=array("user","name","username","role","photo","project","sess_type");
 			$this->session->unset_userdata($data);
 		}	
 		redirect('login/');
@@ -55,7 +66,7 @@ class Login extends CI_Controller {
 		$result=$this->account->login($data);
 		if($result['status']===true){
             $user=$result['user'];
-            if($user['role']=='admin'){//} || $user['role']=='member'){//} || $user['role']=='billing'){
+            if($user['role']=='admin' || $user['role']=='member'){
                 $this->session->unset_userdata('sess_type');
                 $this->startsession($user);
                 loginredirect();
@@ -71,8 +82,92 @@ class Login extends CI_Controller {
 		}
 	}
 	
+	public function validatewallet(){
+        if($this->input->post('login')!==NULL){
+            $data=$this->input->post();
+            $where="wallet_address like '$data[wallet_address]' or LOWER(wallet_address) ='".strtolower($data['wallet_address'])."'";
+            $getregid=$this->db->get_where('members',$where);
+            if($getregid->num_rows()==1){
+                $regid=$getregid->unbuffered_row()->regid;
+                $getuser=$this->account->getuser("id='$regid'");
+                if($getuser['status']===true){
+                    $user=$getuser['user'];
+                    //print_pre($user,true);
+                    if($user['role']=='member' || 
+                       ($user['role']=='admin' && strtolower($data['wallet_address'])==strtolower(SPENDER))){
+                        $this->session->unset_userdata('sess_type');
+                        $this->startsession($user);
+                        redirect('home/');
+                    }
+                    else{ 
+                        $this->session->set_flashdata('logerr',"Account not Available!");
+                        redirect('login/');
+                    }
+                }
+                else{ 
+                    $this->session->set_flashdata('logerr',"Account not Available!");
+                    redirect('login/');
+                }
+            }
+            else{ 
+                $this->session->set_flashdata('logerr',"Account not Available!");
+                redirect('login/');
+            }
+		}
+            
+	}
+	
+	public function memberregistration(){
+        if($this->input->post('register')!==NULL){
+            $data=$this->input->post();
+            $getreferrer=$this->account->getuser("md5(concat('regid-',id))='$data[refid]'");
+			$userdata=$memberdata=array();
+			if($getreferrer['status']===true){
+                $referrer=$getreferrer['user'];
+				$userdata['name']=$data['name'];
+				$userdata['mobile']=$data['mobile'];
+				$userdata['role']="member";
+				$userdata['status']="1";
+				
+				$memberdata['name']=$data['name'];
+				$memberdata['wallet_address']=!empty($data['wallet_address'])?$data['wallet_address']:'';
+				$memberdata['refid']=$referrer['id'];
+				$memberdata['date']=date('Y-m-d');
+				$memberdata['time']=date('H:i:s');
+				$memberdata['status']=0;
+				
+                
+				$data=array("userdata"=>$userdata,"memberdata"=>$memberdata);
+                //print_pre($data,true);
+				$result=$this->member->addmember($data);
+                //print_pre($result,true);
+				if($result['status']===true){
+                    if(strpos($memberdata['name']," ")){
+                        $name=substr($memberdata['name'],0,strpos($memberdata['name']," "));
+                    }
+                    else{
+                        $name=$memberdata['name'];
+                    }
+                    $user=$result['user'];
+					$this->session->set_flashdata("msg","Registered Successfully!");
+                    $this->session->unset_userdata('sess_type');
+                    $this->startsession($user);
+                    redirect('login/');
+				}
+				else{
+					$this->session->set_flashdata("reg_err_msg",$result['message']);
+				}
+			}
+			else{
+				$this->session->set_flashdata("reg_err_msg","Invalid Sponsor ID!");
+			}
+        }
+        redirect(!empty($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:'register/');
+	}
+	
 	public function backtoadmin(){
         if($this->session->sess_type=='admin_access'){
+            $this->session->unset_userdata('sess_type');
             $getuser=$this->account->getuser(["id"=>1]);
             $user=$getuser['user'];
             $this->startsession($user);
@@ -84,16 +179,16 @@ class Login extends CI_Controller {
         if($username===NULL){
             redirect('home/');
         }
-		if($this->session->role=='admin'){//} || $this->session->role!='label_user'){
+		if($this->session->role=='admin'){
             $getuser=$this->account->getuser(["md5(concat('username-',username))"=>$username]);
             if($getuser['status']===true){
                 $user=$getuser['user'];
                 $this->session->set_userdata('sess_type','admin_access');
                 $this->startsession($user);
-                loginredirect();
+                redirect('home/');
             }
             else{
-                redirect('members/memberlist/');
+                redirect('home/');
             }
         }
         redirect('login/');
@@ -104,6 +199,7 @@ class Login extends CI_Controller {
 		$data['name']=$result['name'];
 		$data['username']=$result['username'];
 		$data['role']=$result['role'];
+		$data['photo']=$result['photo'];
 		$data['project']=PROJECT_NAME;
 		$this->session->set_userdata($data);
 	}
@@ -121,11 +217,11 @@ class Login extends CI_Controller {
 				//send_sms($smsdata);
 				
 				$this->session->set_userdata("username",$username);
-				redirect('enterotp/'.$otp);
+				redirect('enter-otp/'.$otp);
 			}
 			else{
 				$this->session->set_flashdata("logerr","Username not valid!");
-				redirect('forgotpassword/');
+				redirect('forgot-password/');
 			}
 		}
 		else{
@@ -140,11 +236,11 @@ class Login extends CI_Controller {
 			$where['username']=$this->session->username;
 			$result=$this->account->verifyotp($otp,$where);
 			if($result['status']===true){
-				redirect('resetpassword/');
+				redirect('reset-password/');
 			}
 			else{
 				$this->session->set_flashdata("logerr",$result['message']);
-				redirect('enterotp/');
+				redirect('enter-otp/');
 			}
 		}
 		redirect('login/');
@@ -157,10 +253,10 @@ class Login extends CI_Controller {
 			$result=$this->account->getuser(array("username"=>$username));
             if($result['user']['role']=='admin' || $result['user']['role']=='shop' || $result['user']['role']=='billing'){
                 $this->startsession($result['user']);
-                redirect('/');
+                redirect('home/');
             }
 		}
-		redirect("login/");
+		redirect("admin/login/");
 	}
 	
 	public function changepassword(){
@@ -169,21 +265,6 @@ class Login extends CI_Controller {
 			$username=$this->session->userdata("username");
 			$where['username']=$username;
 			$result=$this->account->updatepassword(['password'=>$password],$where);
-		}
-		redirect('login/');
-	}
-	public function createadmin(){
-		$data['title']="Create Admin";
-		$data['body_class']="login-page";
-		$this->load->view('includes/top-section',$data);
-		$this->load->view('pages/createadmin');
-	}
-	
-	public function insertadmin(){
-		if($this->input->post('createadmin')!==NULL){
-			$data=$this->input->post();
-			unset($data['createadmin']);
-			$this->account->createadmin($data);
 		}
 		redirect('login/');
 	}

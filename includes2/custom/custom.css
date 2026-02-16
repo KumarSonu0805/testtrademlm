@@ -1,0 +1,82 @@
+/* CSS Document */
+#body-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+    z-index: 9998;
+    display: none; /* Hidden by default */
+}
+.login-box{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+.login-box .card{
+    width: 40%;
+    margin: 0 auto;
+    /* padding: 20px 40px; */
+    box-shadow: 0 0 24px 0 rgba(3, 31, 66, 0.1);
+}
+
+.value-card-section {
+   margin-bottom: 80px;
+   text-align: center;
+}
+.value-card-section .value-card {
+   background: linear-gradient(135deg, #1b1b1f, #2e2f36);
+   padding:20px;
+   border-radius: 15px;
+   box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+   transition: transform 0.3s, box-shadow 0.3s;
+   color: #fff;
+   font-family: 'Poppins', sans-serif;
+}
+.value-card-section .value-card h5 {
+   font-size: 1.3rem;
+   margin-bottom: 15px;
+   color: #f8b400;
+}
+.value-card-section .value-card p {
+   font-size: 1.5rem;
+   color: #fff;
+   margin-bottom:0;
+}
+.value-card-section .value-card:hover {
+   transform: translateY(-10px);
+   box-shadow: 0 15px 30px rgba(51, 38, 1, 0.5);
+}
+
+h1, h2, h3, h4, h5, h6{
+    font-weight: 500;
+}
+footer{
+    position: fixed;
+    bottom: 0;
+    z-index: 3;
+}
+@media (max-width: 350px){
+    .login-box .card {
+        width: 95%;
+    }
+}
+@media (min-width: 351px) and (max-width: 425px){
+    .login-box .card {
+        width: 80%;
+    }
+}
+@media (min-width: 426px) and (max-width: 768px) {
+    .login-box .card {
+        width: 70%;
+    }
+}
+@media (max-width: 768px) {
+   .value-card-section .value-card {
+      padding: 25px 15px;
+   }
+   .value-card-section .value-card p {
+      font-size: 1.2rem;
+   }
+}

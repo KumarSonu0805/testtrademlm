@@ -1,172 +1,329 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Home extends CI_Controller {
-	function __construct(){
-		parent::__construct();
-        logrequest();
-	}
-	
-	public function index(){
+class Home extends MY_Controller {
+    
+    public function __construct() {
+        parent::__construct();
+        // Load global models, check auth, etc.
+    }
+    
+    public function index(){
         checklogin();
-        //$this->wallet->addallcommission();
-		$data['title']="Home";    
-        if($this->session->role=='member'){
-            $getuser=$this->account->getuser(array("md5(id)"=>$this->session->userdata('user')));
+        $data=['title'=>'Home'];
+        if($this->session->role=='admin' && $this->session->user==md5(1)){
+        }
+        else{
+            $data['user']=getuser();
+            $this->income->generateincome($data['user']);
+            $data['member']=$this->member->getmemberdetails($data['user']['id']);
+        }  
+        $this->template->load('pages','home',$data);
+    }
+    
+    public function invite(){
+        checklogin();
+        if($this->session->role=='admin'){
+            redirect('/');
+        }
+        $data=['title'=>'Invite'];
+        $user=getuser();
+        $data['members']=$this->member->getdirectmembers($user['id']);
+        $data['datatable']=true;
+        $this->template->load('pages','invite',$data);
+    }
+    
+	public function changepassword(){
+        checklogin();
+        $getuser=$this->account->getuser(array("md5(id)"=>$this->session->user));
+        if($getuser['status']===true){
             $data['user']=$getuser['user'];
-            $regid=$data['user']['id'];
-            $this->wallet->addcommission($regid);
-            $data['share']=true;
-            $memberdetails=$this->member->getalldetails($regid);
-            $data['member']=$memberdetails['member'];
-            $homedata=$this->common->homedata($regid);
-            
-            $dir='./assets/images/qrimage/';
-            $images=array();
-            if (is_dir($dir)){
-                if ($dh = opendir($dir)){
-                    while (($file = readdir($dh)) !== false){
-                        $filetype=filetype($dir.$file);
-                        if($filetype!='dir'){
-                            $time=filemtime($dir.$file);
-                            $images[$time]=$file;
+        }
+        else{
+            redirect('home/');
+        }
+        $data['title']="Edit Password";
+        //$data['subtitle']="Sample Subtitle";
+        $data['breadcrumb']=array();
+        $data['alertify']=true;
+		$this->template->load('pages','changepassword',$data);
+	}
+    
+    public function updatepassword(){
+        if($this->input->post('updatepassword')!==NULL){
+            $old_password=$this->input->post('old_password');
+            $password=$this->input->post('password');
+            $repassword=$this->input->post('repassword');
+            $user=getuser();
+            if(password_verify($old_password.SITE_SALT.$user['salt'],$user['password'])){
+                $user=$this->session->user;
+                if($password==$repassword){
+                    $result=$this->account->updatepassword(array("password"=>$password),array("md5(id)"=>$user));
+                    if($result['status']===true){
+                        $this->session->set_flashdata('msg',$result['message']);
+                    }
+                    else{
+                        $error=$result['message'];
+                        $this->session->set_flashdata('err_msg',$error);
+                    }
+                }
+                else{
+                    $error=$result['message'];
+                    $this->session->set_flashdata('err_msg',"Password Do not Match!");
+                }
+            }
+            else{
+                $this->session->set_flashdata('err_msg',"Old Password Does not Match!");
+            }
+        }
+        redirect($_SERVER['HTTP_REFERER']);
+    }
+    
+    public function updatecoinrate(){
+        session_write_close();  
+        $this->setting->generatesettings();
+        $settings=$this->setting->getsettings(['name'=>'coin_rate'],'single');
+        $rate=$this->input->post('rate');
+        $data=['id'=>$settings['id'],'value'=>$rate];
+        $result=$this->setting->updatesetting($data);
+        echo $result['message'];
+    }
+    
+    public function updatewallet(){
+        $handle = fopen('./wallet.txt', 'r');
+        if ($handle) {
+            while (($line = fgets($handle)) !== false) {
+                $array=explode('-',$line);
+                $username=!empty($array[0])?trim($array[0]):'';
+                $amount=!empty($array[1])?trim($array[1]):0;
+                if(!empty($username) && !empty($amount)){
+                    $getuser=$this->db->get_where('users',['username'=>$username]);
+                    if($getuser->num_rows()==1){
+                        $user=$getuser->unbuffered_row('array');
+                        $regid=$user['id'];
+                        $date='2025-07-01';//date('Y-m-d');
+                        $rate=0.8;
+                        $amount=$amount/$rate;
+                        if($this->db->get_where('income',['regid'=>$regid,'type'=>'opening'])->num_rows()==0){
+                            $data=array('regid'=>$regid,'date'=>$date,'type'=>'opening','rate'=>$rate,'amount'=>$amount,'status'=>1,
+                                        'added_on'=>date('Y-m-d H:i:s'),'updated_on'=>date('Y-m-d H:i:s'));
+                            $this->db->insert('income',$data);
                         }
                     }
                 }
             }
-            krsort($images);
-            if(!empty($images)){$id=0;
-                foreach($images as $qrimage){ $id++;
-                    $qrimage=$dir.$qrimage;
-                    $data['qrimages'][]=['id'=>$id,'qrimage'=>$qrimage];
-                    if($id>0){ break; }
-                }
-            }else{
-                $data['qrimages'][]=['id'=>1,'qrimage'=>''];
-            }
-            $date=date('Y-m-d');
-            $status=0;
-            
-            $message="";
-            $joining_date=$memberdetails['member']['date'];
-            if($date<=date('Y-m-d',strtotime($joining_date.' +30days'))){
-                $status=1;
-                if($memberdetails['member']['status']==0){
-                    $date1 = new DateTime(date('Y-m-d',strtotime($date)));
-                    $date2 = new DateTime(date('Y-m-d',strtotime($joining_date)));
-
-                    // Calculate the difference between the two dates
-                    $interval = date_diff($date1, $date2);
-
-                    // Get the number of days from the DateInterval object
-                    $numberOfDays = $interval->format('%a');
-                    if($numberOfDays>=25){
-                        $remDays=30-$numberOfDays;
-                        $message="Your Account will be Deleted in $remDays Days! Please Activate your Account!";
-                    }
-                }
-            }
-            else{
-                $this->db->order_by('added_on desc');
-                $epinused=$this->db->get_where('epin_used',['used_by'=>$regid])->unbuffered_row('array');
-                $lastrenewaldate=date('Y-m-d',strtotime($epinused['added_on']));
-                if($date<=date('Y-m-d',strtotime($lastrenewaldate.' +30days'))){
-                    $status=1;
-                    $date1 = new DateTime(date('Y-m-d',strtotime($date)));
-                    $date2 = new DateTime(date('Y-m-d',strtotime($lastrenewaldate)));
-
-                    // Calculate the difference between the two dates
-                    $interval = date_diff($date1, $date2);
-
-                    // Get the number of days from the DateInterval object
-                    $numberOfDays = $interval->format('%a');
-                    if($numberOfDays>=25){
-                        $remDays=30-$numberOfDays;
-                        //$message="Your Account will expire in $remDays Days! Please Renew your Account!";
-                    }
-                }
-                else{
-                    $status=2;
-                }
-            }
-            $data['status']=$status;
-            $data['message']=$message;
-            $data['news']=$this->common->getnews("status='1' and (type='dashboard' or type='both')","all","updated_on desc");
-            $data['clubs']=$this->package->getpackages(['type'=>'upgrade']);
-            $data['packages']=$this->package->getpackages(['type'=>'farming']);
+            fclose($handle);
+        } else {
+            echo "Unable to open file.";
         }
-        else{
-            //$this->addallcommission();
-            $this->deletetokens();
-            $this->deleteinactivemembers();
-            $this->clearlogs();
-            //$this->wallet->addallcommission();
-            $homedata=$this->common->adminhomedata();
-        }
-        $data=array_merge($data,$homedata);
-		$this->template->load('pages','home',$data);
-	}
-    
-	public function editpassword(){
-        checklogin();
-        $data['title']="Edit Password";
-        //$data['subtitle']="Sample Subtitle";
-        $data['user']=$this->account->getusers(['md5(id)'=>$this->session->user],"single");
-        $data['breadcrumb']=array();
-		$this->template->load('pages','editpassword',$data);
-	}
-
-	public function contacts(){
-        if($this->session->role!=='admin'){
-            redirect('home/');
-        }
-        $data['title']="Contacts";
-        //$data['subtitle']="Sample Subtitle";
-        $data['breadcrumb']=array();
-        $data['contacts']=$this->common->getcontacts();
-        $data['datatable']=true;
-		$this->template->load('pages','contacts',$data);
-	}
-	
-    public function updatepassword(){
-        if($this->input->post('updatepassword')!==NULL){
-            $password=$this->input->post('password');
-            $username=$this->input->post('username');
-            $result=$this->account->updatepassword(array("password"=>$password),array("username"=>$username));
-            if($result['status']===true){
-                $this->session->set_flashdata('msg',$result['message']);
-            }
-            else{
-                $error=$result['message'];
-                $this->session->set_flashdata('err_msg',$error);
-            }
-        }
-        redirect('/');
     }
     
-    public function checkmail(){
-        $email="prateek.atal@gmail.com";
-        $subject="New E-Pin Request Received";
-        $message='<p>You have received a new E-Pin request.</p>';
-        $message.='<p>Please login to you account to view and update the request.</p>';
-        $message.='<a href="'.base_url('epins/requestlist/').'">Open E-Pin Request List</a>';
-        //sendnotifications($email,$subject,$message);
-            
-        $subject="New Withdrawal Request Received";
-        $message='<p>You have received a new Withdrawal request.</p>';
-        $message.='<p>Please login to you account to view and update the request.</p>';
-        $message.='<a href="'.base_url('wallet/requestlist/').'">Open Withdrawal Request List</a>';
-        //sendnotifications($email,$subject,$message);
+    public function checkcompound(){
+        $principal=10;
+        $dailyRate=0.009;
+        echo 'Interests:<br>';
+        for($days=0;$days<=10;$days++){
+            echo $days.':';
+            if($days>0){
+                if($days==5){
+                    $principal= $this->income->calculateDailyCompound($principal, $dailyRate, 1);
+                    $principal+= $this->income->calculateDailyCompound(10, $dailyRate, 1);
+                }
+                else{
+                    $principal= $this->income->calculateDailyCompound($principal, $dailyRate, 1);
+                }
+            }
+            echo $principal;
+            echo '<br>';
+        }
         
-        $subject="New Helpdesk Query Received";
-        $message='<p>You have received a new Helpdesk Query.</p>';
-        $message.='<p>Please login to you account to view and update the request.</p>';
-        $message.='<a href="'.base_url('helpdeskmessages/').'">Open Helpdesk Query List</a>';
-        //sendnotifications($email,$subject,$message);
+        echo '<br>--------------------------------<br>';
+        $principal = 10;       // Initial deposit
+        $days = 10;            // Number of compounding days
+        $rate = 0.009;         // 0.9% per day
+
+        for($days=1;$days<=10;$days++){
+            $finalAmount = $this->income->calculateDailyCompound($principal, $rate, $days);
+            $totalReward = $finalAmount - $principal;
+            if($days==4){
+                $principal+=10;
+            }
+            echo "Final Amount after $days days: $" . number_format($finalAmount, 6) . "<br>";
+            echo "Total Reward: $" . number_format($totalReward, 6) . "<br>";
+        }
+        
+        echo '<br>--------------------------------<br>';
+        $dailyRate = 0.009;
+        $totalDays = 10;
+
+        // First deposit: $10 on Day 0 → active for 10 days
+        $deposit1Amount = 10;
+        $deposit1Days = 10;
+        $final1 = $this->income->calculateDailyCompound($deposit1Amount, $dailyRate, $deposit1Days);
+
+        // Second deposit: $10 on Day 5 → active for (10 - 5) = 5 days
+        $deposit2Amount = 10;
+        $deposit2Days = 5;
+        $final2 = $this->income->calculateDailyCompound($deposit2Amount, $dailyRate, $deposit2Days);
+
+        // Total final amount and reward
+        $finalTotal = $final1 + $final2;
+        $totalPrincipal = $deposit1Amount + $deposit2Amount;
+        $totalReward = $finalTotal - $totalPrincipal;
+
+        // Output
+        echo "Final Amount after $totalDays days: $" . number_format($finalTotal, 6) . "<br>";
+        echo "Total Reward: $" . number_format($totalReward, 6) . "<br>";
+        
+        echo '<br>--------------------------------<br>';
+        $deposits = [
+            ['amount' => 10, 'date' => '2025-06-13'],  // 10 days ago
+            ['amount' => 10, 'date' => '2025-06-17'],  // 5 days ago
+        ];
+
+        $targetDate = '2025-06-23';
+        $startDate = '2025-06-13';
+
+        for($i=0;$i<=10;$i++){
+            $targetDate=date('Y-m-d',strtotime($startDate.' +'.$i.'days'));
+            $total = $this->income->compoundedTotal($deposits, $targetDate);
+            //$principal = array_sum(array_column($deposits, 'amount'));
+            $principal = 0;
+            foreach($deposits as $deposit){
+                if($deposit['date']<=$targetDate){
+                    $principal+=$deposit['amount'];
+                }
+            }
+            $reward = $total - $principal;
+
+            echo "Final Amount on $targetDate after $i days: $" . number_format($total, 6) . "<br>";
+            echo "Total Reward: $" . number_format($reward, 6) . "<br>";
+        }
+
+    }
+    
+    public function error(){
+        $data=['title'=>'Error'];
+        $this->template->load('pages','error',$data);
+    }
+    
+    public function testswap(){
+        $data=['title'=>'Swap'];
+        //$this->template->load('pages','testswap',$data);
+        $this->load->view('pages/testswap2',$data);
+    }
+    
+    public function teststake(){
+        $data=['title'=>'Stake'];
+        $this->template->load('pages','teststake',$data);
+    }
+    
+    public function staked(){
+        $data=['title'=>'Staked'];
+        $this->template->load('pages','staked',$data);
+    }
+    
+    public function liverate(){
+        $data=['title'=>'Live Rate'];
+        $this->template->load('pages','liverate',$data);
+    }
+    
+    public function liquidity(){
+        $data=['title'=>'Liquidity'];
+        $this->template->load('pages','liquidity',$data);
+    }
+    
+    public function generateincome($date=NULL){
+        $this->income->generateallincome($date);
+        echo "Executed at ".date('d-m-Y H:i:s');
+    }
+    
+    public function testincome($id){
+        $user=$this->db->get_where('users',['id'=>$id])->unbuffered_row('array');
+        print_pre($user);
+        $this->income->generateincome($user);
+        echo "Executed at ".date('d-m-Y H:i:s');
+    }
+    
+    public function updateinvestment(){
+        $tokenrate=getTokenRate();
+        $members=$this->db->get_where('members',"old='1' and regid not in (SELECT regid from ".TP."investments)")->result_array();
+        $datetime=date('Y-m-d H:i:s');
+        if(!empty($members)){
+            foreach($members as $member){
+                $amount=$member['package']/2;
+                if($tokenrate>0){
+                    $amount/=$tokenrate;
+                }
+                else{
+                    $amount=0;
+                }
+                $data=array('regid'=>$member['regid'],'date'=>date('Y-m-d'),'amount'=>$amount,'old'=>1,'status'=>1,
+                            'added_on'=>$datetime,'updated_on'=>$datetime);
+                $this->db->insert('investments',$data);
+            }
+        }
+    }
+    
+    public function updateunstake(){
+        $this->db->order_by('updated_on');
+        $this->db->group_by('regid,updated_on');
+        $this->db->select('*,sum(amount) as t_amount,sum(reward) as t_reward,total as t_total,sum(amount+reward) as tt');
+        $investments=$this->db->get_where('investments',['status'=>0,'old'=>0,'unstaked'=>1])->result_array();
+        //print_pre($investments,true);
+        //echo count($investments);
+        $tokenrate=getTokenRate();
+        //`regid`, `inv_id`, `date`, `amount`, `rate`, `reward`, `total`, `approve_date`, `response`, `remarks`, `approved_by`, `status`, `added_on`, `updated_on`
+        $alldata=array();
+        if(!empty($investments)){
+            //foreach($investments as $single){
+            $regid=0;$s=0;$regids=array();$not=array();
+            for($i=0;$i<count($investments);$i++){
+                $single=$investments[$i];
+                if(bccomp($single['t_total'], $single['tt'], 8) !== 0 && 
+                   bccomp($single['t_total'], $single['tt'], 4) !== 0){
+                    print_pre($single);
+                    $s++;
+                    $not[]=$single['id'];
+                    continue;
+                }
+                $regid=$single['regid'];
+                $amount=$single['t_amount'];
+                $reward=$single['t_reward'];
+                $next=isset($investments[$i+1])?$investments[$i+1]:array();
+                $added_on=$single['added_on'];
+                $updated_on=$single['updated_on'];
+                $total=$reward+$amount;
+                $date=date('Y-m-d',strtotime($single['updated_on']));
+                $data=array('regid'=>$regid,'date'=>$date,'amount'=>$amount,'rate'=>0,
+                            'reward'=>$reward,'total'=>$total,'approve_date'=>$date,'approved_by'=>$regid,
+                            'status'=>1,'added_on'=>$added_on,'updated_on'=>$updated_on);
+                //print_pre($data);
+                $alldata[]=$data;
+                $regids[]=$regid;
+                //echo '<br>--------------------------------<br>';
+            }
+        }
+        echo $s;
+        if(!empty($alldata)){
+            $this->db->trans_start();
+            $this->db->insert_batch('unstake',$alldata);
+            if(!empty($regids)){
+                $this->db->where_in('regid',$regids);
+            }
+            if(!empty($not)){
+                $this->db->where_not_in('id',$not);
+            }
+            $this->db->update('investments',['unstake'=>0],['status'=>0,'old'=>0,'unstaked'=>1]);
+            print_pre($this->db->last_query());
+        }
+        //print_pre($alldata);
     }
     
     public function runquery(){
-        $query=array("ALTER TABLE `dc_deposits` ADD `package_id` INT NOT NULL AFTER `trans_type`;");
+        $query=array(
+                    "ALTER TABLE `bs_member_ranks` CHANGE `rank` `rank` VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;"
+        );
         foreach($query as $sql){
             if(!$this->db->query($sql)){
                 print_r($this->db->error());
@@ -174,212 +331,68 @@ class Home extends CI_Controller {
         }
     }
     
-    /*"DELETE from it_users where id>1 and id<24",
-                    "DELETE from it_acc_details where regid not in (Select id from it_users);",
-                    "DELETE from it_epins where regid not in (Select id from it_users);",
-                    "DELETE from it_epin_requests where regid not in (Select id from it_users);",
-                    "DELETE from it_epin_transfer where reg_to not in (Select id from it_users);",
-                    "DELETE from it_epin_used where used_by not in (Select id from it_users);",
-                    "DELETE from it_level_members where regid not in (Select id from it_users);",
-                    "DELETE from it_nominee where regid not in (Select id from it_users);",
-                    "DELETE from it_wallet where regid not in (Select id from it_users);",
-                    "DELETE from it_withdrawals where regid not in (Select id from it_users);"
-                    */
-    
-    public function deleteclubincome(){
-        $members=$this->db->get_where('members',['status'=>1])->result_array();
-        if(!empty($members)){
-            foreach($members as $member){
-                $getclub=$this->db->get_where('club_members',['regid'=>$member['regid']]);
-                if($getclub->num_rows()>0){
-                    $myclubs=$getclub->result_array();
-                    $myclub_ids=array_column($myclubs,'club_id');
-                    $this->db->where_not_in('club_id',$myclub_ids);
+    public function importdata(){
+        $json=file_get_contents(file_url('assets/data.json'));
+        return false;
+        $array=json_decode($json,true);
+        if(!empty($array)){
+            foreach($array as $row){
+                if(empty($row['Member ID'])){
+                    continue;
                 }
-                $this->db->delete("wallet","regid='$member[regid]' and remarks like '%Club Income'");
-                echo $this->db->last_query();echo "<br>";
-            }
-        }
-    }
-    
-    public function deleteinactivemembers(){
-        $lastdate=date('Y-m-d H:i:s',strtotime('-30 days'));
-        $getmembers=$this->db->get_where('members',array('added_on<'=>$lastdate,'status'=>0));
-        if($getmembers->num_rows()>0){
-            $members=$getmembers->result_array();
-            foreach($members as $member){
-                $this->member->deletemember($member['regid']);
-            }
-        }
-        $this->db->delete('helpdesk',['added_on<'=>$lastdate]);
-    }
-    
-    public function deletetokens(){
-        $query=array('DELETE from '.TP.'tokens where status=0');
-        foreach($query as $sql){
-            if(!$this->db->query($sql)){
-                print_r($this->db->error());
-            }
-        }
-    }
-    
-    public function checkdouble(){
-        $query=array("DELETE FROM `".TP."wallet` WHERE regid=0");
-        foreach($query as $sql){
-            if(!$this->db->query($sql)){
-                print_r($this->db->error());
-            }
-        }
-    }
-    
-    public function clearlogs($all=false){
-        if($all===false){
-            $sql="DELETE from ".TP."request_log where date(added_on)<'".date('Y-m-d',strtotime('-7 days'))."'";
-        }
-        elseif($all=='all'){
-            $sql='TRUNCATE ".TP."request_log';
-        }
-        else{
-            $sql='';
-        }
-        $query=array($sql);
-        foreach($query as $sql){
-            if(!$this->db->query($sql)){
-                print_r($this->db->error());
-            }
-        }
-    }
-    
-    public function cleardata($auth=NULL,$action=NULL){
-        if($auth=='superadmin' && $action=='clearall' && date('Y-m-d')=='2023-03-17'){
-            $query=array(
-                        'DELETE from fpt_users where id>2',
-                        'TRUNCATE `fpt_acc_details`',
-                        'TRUNCATE `fpt_daily_ads`',
-                        'TRUNCATE `fpt_epin_activations`',
-                        'TRUNCATE `fpt_level_members`',
-                        'TRUNCATE `fpt_nominee`',
-                        'TRUNCATE `fpt_renewals`',
-                        'TRUNCATE `fpt_request_log`',
-                        'TRUNCATE `fpt_spins`',
-                        'TRUNCATE `fpt_tokens`',
-                        'TRUNCATE `fpt_transactions`',
-                        'TRUNCATE `fpt_wallet`',
-                        'TRUNCATE `fpt_wallet_transfers`',
-                        'TRUNCATE `fpt_withdrawals`',
-                        'ALTER TABLE `fpt_users` auto_increment = 1',
-                        'ALTER TABLE `fpt_members` auto_increment = 1');
-            foreach($query as $sql){
-                if(!$this->db->query($sql)){
-                    //print_r($this->db->error());
-                }
-            }
-        }
-    }
-    
-    public function checkincome($regid=8){
-        //$this->wallet->joiningbonus($regid);
-        //$this->wallet->sponsorincome($regid);
-        //$this->wallet->levelincome($regid);
-        //$this->wallet->adsviewincome($regid);
-        //$this->wallet->spinincome($regid);
-        $this->wallet->singlelegincome($regid);
-    }
-    
-    public function matchcolumns(){
-        $tables=$this->db->query("show tables;")->result_array();
-        foreach($tables as $table){
-            $tablename=$table['Tables_in_'.DB_NAME];
-            $columns=$this->db->query("DESC $tablename;")->result_array();
-            echo "<h1>$tablename</h1>";
-            echo "<table border='1' cellspacing='0' cellpadding='5'>";
-            echo "<tr>";
-            foreach($columns[0] as $key=>$value){
-                echo "<td>$key</td>";
-            }
-            echo "</tr>";
-            foreach($columns as $column){
-                echo "<tr>";
-                foreach($column as $key=>$value){
-                    echo "<td>$value</td>";
-                }
-                echo "</tr>";
-            }
-            echo "</table>";
-        }
-    }
-    
-    public function checkbalance(){
-        $result= $this->dmt_request->checkbalance();	
-        print_r($result);
-        //Array ( [status] => SUCCESS [error] => 0 [balance] => 1.24 [time] => November 11 2022 08:14:18 AM [desc] => Request success [duration] => 0.001 )
-    }
-    
-    public function confirmpayment(){
-		$result=$this->input->post();
-		$text="";
-		if(isset($result['userorderid'])){
-			$order_id=$result['userorderid'];
-			$response=json_encode($result);
-			$data=array("response"=>$response);
-			if($result['status']=="ACCEPTED" || $result['status']=="SUCCESS"){
-				$data['status']=1;
-			}
+                
+                $username=$row['Member ID'];
+                $name=$row['Name'];
+                $susername=$row['Sponsor ID'];
+                $sname=$row['Sponsor Name'];
+                $date=date('Y-m-d',strtotime($row['Joining Date']));
+                $mobile=$row['MobileNo'];
+                $email=$row['Email'];
+                $amount=$row['Amount'];
+                $wallet_address=$row['Wallet Address'];
+                $getreferrer=$this->account->getuser("username='$susername'");
+                
+                $userdata=$memberdata=array();
+                if($getreferrer['status']===true){
+                    $referrer=$getreferrer['user'];
+                    $userdata['username']=$username;
+                    $userdata['name']=$name;
+                    $userdata['mobile']=$mobile;
+                    $userdata['email']=$email;
+                    $userdata['role']="member";
+                    $userdata['status']="1";
 
-			$result=$this->wallet->approvepayout($data,array("order_id"=>$order_id));
-			$text.="POST : ".$response;
-		}
-        echo $text;
-		if($text!=""){
-			//mail("",PROJECT_NAME." Payment response","$text Date : ".date('Y-m-d H:i:s'));
-		}
-	}
+                    $memberdata['name']=$name;
+                    $memberdata['wallet_address']=!empty($wallet_address)?$wallet_address:NULL;
+                    $memberdata['refid']=$referrer['id'];
+                    $memberdata['date']=$date;
+                    $memberdata['time']=date('H:i:s');
+                    $memberdata['activation_date']=$date;
+                    $memberdata['activation_time']=date('H:i:s');
+                    $memberdata['old']=1;
+                    $status=1;
+                    if(empty($amount) && empty($wallet_address)){
+                        $amount=0;
+                        $status=0;
+                    }
+                    $memberdata['package']=$amount;
+                    $memberdata['status']=$status;
+
+
+                    $data=array("userdata"=>$userdata,"memberdata"=>$memberdata);
+                    print_pre($data);//continue;
+                    //print_pre($data,true);
+                    $result=$this->member->addmember($data);
+                    print_pre($result);
+                    echo '------------------------------------------------';
+                }
+                else{
+                    
+                    print_pre($susername);
+                    print_pre($getreferrer);
+                }
+            }
+        }
+    }
     
-	public function generateoldincome($date=NULL){
-		$time1 = microtime(true);
-        //$this->wallet->addallcommission($date);
-        $time2 = microtime(true);
-		$time=$time2-$time1;
-        echo "Date : $date completed in $time seconds";
-        $date=date('Y-m-d',strtotime($date.'+1 day'));
-        echo '<script>setTimeout(function(){ window.location="'.base_url('home/generateoldincome/'.$date).'"; },3000);</script>';
-	}
-	
-	public function addallcommission(){
-        //die;
-		$time1 = microtime(true);
-		$this->wallet->addallcommission();
-		$time2 = microtime(true);
-		$time=$time2-$time1;
-        echo "Interval Cron Success in $time seconds. Date : ".date('Y-m-d H:i:s');
-		//mail("atal.prateek@tripledotss.com",PROJECT_NAME." Interval Cron",PROJECT_NAME." Interval Cron Success in $time seconds. Date : ".date('Y-m-d H:i:s'));
-	}
-	
-	public function verifycommission($date=NULL){
-        //die;
-		$time1 = microtime(true);
-		if($date===NULL){
-			$date=date('Y-m-d',strtotime('-1 day'));
-		}
-		$this->wallet->addallcommission($date);
-		$time2 = microtime(true);
-		$time=$time2-$time1;
-        echo "Verify Cron Success in $time seconds. Date : ".date('Y-m-d H:i:s');
-		mail("atal.prateek@tripledotss.com",PROJECT_NAME." Verify Cron",PROJECT_NAME." Verify Cron Success in $time seconds. Date : ".date('Y-m-d H:i:s'));
-	}
-	
-	public function alldata($token=''){
-		$this->load->library('alldata');
-		$this->alldata->viewall($token);
-	}
-	
-	public function gettable(){
-		$this->load->library('alldata');
-		$this->alldata->gettable();
-	}
-	
-	public function updatedata(){
-		$this->load->library('alldata');
-		$this->alldata->updatedata();
-	}
 }

@@ -1,340 +1,406 @@
-<!-- Main Sidebar Container -->
-<aside class="main-sidebar elevation-4 sidebar-no-expand <?= SIDEBAR_COLOR; ?>">
-    <!-- Brand Logo -->
-    <a href="<?= base_url('home/'); ?>" class="brand-link <?= BRAND_COLOR; ?>  text-center" style="background: transparent;">
-        <img src="<?= file_url("assets/images/logo.jpg"); ?>" alt="<?= PROJECT_NAME; ?> Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light lead"><strong><?= PROJECT_NAME; ?></strong></span>
-    </a>
-    
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-            	<img src="<?= $userphoto; ?>" class="img-circle elevation-2" alt="User Image">
-            </div>
-            <div class="info pt-0">
-            	<a href="#" class="d-block"><?= $this->session->name; ?></a>
-            	<a href="#" class="d-block"><?= $this->session->username; ?></a>
-            </div>
-        </div>
-        
-        <!-- Sidebar Menu -->
-        <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column nav-compact nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
-                <?php if($this->session->role!='admin' && $this->session->sess_type=='admin_access'){ ?>
-                <li class="nav-item">
-                    <a href="<?= base_url('login/backtoadmin/'); ?>" class="nav-link <?= activate_menu('login/backtoadmin'); ?>">
-                        <i class="nav-icon fas fa-arrow-left"></i>
-                        <p>Back To Admin Panel</p>
-                    </a>
-                </li>
-                <?php } ?>
-                <li class="nav-item">
-                    <a href="<?= base_url('home/'); ?>" class="nav-link <?= activate_menu('home'); ?>">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>Home</p>
-                    </a>
-                </li>
-                <?php if($this->session->role=='member'){ ?>
-                <li class="nav-item has-treeview <?= activate_dropdown('profile'); ?>">
-                    <a href="#" class="nav-link <?= activate_dropdown('profile','a'); ?>">
-                        <i class="nav-icon fas fa-user"></i>
-                        <p>Member Details <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?= base_url("profile/"); ?>" class="nav-link <?= activate_menu('profile'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Profile</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("profile/changepassword/"); ?>" class="nav-link <?= activate_menu('profile/changepassword'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Change Password</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("profile/accdetails/"); ?>" class="nav-link <?= activate_menu('profile/accdetails'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Account Details</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("profile/kyc/"); ?>" class="nav-link <?= activate_menu('profile/kyc'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>KYC</p>
-                            </a>
-                        </li>
-                        <?php /*?><li class="nav-item">
-                            <a href="<?= base_url("profile/idcard/"); ?>" class="nav-link <?= activate_menu('profile/idcard'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>ID Card</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("profile/welcomeletter/"); ?>" class="nav-link <?= activate_menu('profile/welcomeletter'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Welcome Letter</p>
-                            </a>
-                        </li><?php */?>
-                    </ul>
-                </li>
-                <?php }else{ ?> 
-                <li class="nav-item">
-                    <a href="<?= base_url('profile/changepassword/'); ?>" class="nav-link <?= activate_menu('profile/changepassword'); ?>">
-                        <i class="nav-icon fas fa-key"></i>
-                        <p>Change Password</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?= base_url('profile/adminaccdetails/'); ?>" class="nav-link <?= activate_menu('profile/adminaccdetails'); ?>">
-                        <i class="nav-icon fas fa-list"></i>
-                        <p>Admin Account Details</p>
-                    </a>
-                </li>
-                <?php } ?>
-                <li class="nav-item has-treeview <?= activate_dropdown('members','li',array('treeview')); ?>">
-                    <a href="#" class="nav-link <?= activate_dropdown('members','a',array('treeview')); ?>">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>Members <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?= base_url("members/"); ?>" class="nav-link <?= activate_menu('members'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Member Registration</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("members/memberlist/"); ?>" class="nav-link <?= activate_menu('members/memberlist'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Member List</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("members/activelist/"); ?>" class="nav-link <?= activate_menu('members/activelist'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Active Member List</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("members/inactivelist/"); ?>" class="nav-link <?= activate_menu('members/inactivelist'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>In-Active Member List</p>
-                            </a>
-                        </li>
-                        <li class="nav-item d-none">
-                            <a href="<?= base_url("members/tree/"); ?>" class="nav-link <?= activate_menu('members/tree'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Member Tree</p>
-                            </a>
-                        </li>
-                        <li class="nav-item d-none">
-                            <a href="<?= base_url("members/levelwisemembers/"); ?>" class="nav-link <?= activate_menu('members/levelwisemembers'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Level Wise Member List</p>
-                            </a>
-                        </li>
-                        <?php if($this->session->role=='admin'){ ?>
-                        <li class="nav-item">
-                            <a href="<?= base_url("members/kyc/"); ?>" class="nav-link <?= activate_menu('members/kyc'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>KYC Requests</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("members/approvedkyc/"); ?>" class="nav-link <?= activate_menu('members/approvedkyc'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Approved KYC</p>
-                            </a>
-                        </li>
+<!-- Sidebar -->
+		<div class="sidebar sidebar-style-2" data-background-color="<?= SIDEBAR_BG ?>">
+			
+			<div class="sidebar-wrapper scrollbar scrollbar-inner">
+				<div class="sidebar-content">
+					<div class="user">
+						<div class="avatar-sm float-left mr-2">
+							<img src="<?= file_url('includes/img/profile.jpg'); ?>" alt="..." class="avatar-img rounded-circle">
+						</div>
+						<div class="info">
+							<a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
+								<span>
+									<?= $this->session->name; ?>
+									<span class="user-level"><?= $this->session->role=='member'?$this->session->username.(getrank()):$this->session->role ?></span>
+									<span class="caret"></span>
+								</span>
+							</a>
+							<div class="clearfix"></div>
+                            <?php if($this->session->role=='admin'){ ?>
+							<div class="collapse in" id="collapseExample">
+								<ul class="nav">
+									<li>
+										<a href="<?= base_url('home/changepassword/'); ?>">
+											<span class="link-collapse">Change Password</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+                            <?php } ?>
+						</div>
+					</div>
+					<ul class="nav nav-primary">
+                        <?php if($this->session->sess_type=='admin_access'){ ?>
+						<li class="nav-item">
+							<a href="<?= base_url('login/backtoadmin'); ?>" >
+								<i class="fas fa-arrow-left"></i>
+								<p>Back to Admin Panel</p>
+							</a>
+						</li>
                         <?php } ?>
-                        <?php /*?>
-                        <li class="nav-item">
-                            <a href="<?= base_url("members/renewals/"); ?>" class="nav-link <?= activate_menu('members/renewals'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Member Renewals</p>
-                            </a>
-                        </li><?php */?>
-                    </ul>
-                </li>
-                <?php if($this->session->role=='admin'){ ?>
-                <li class="nav-item">
-                    <a href="<?= base_url('activationrequests/'); ?>" class="nav-link <?= activate_menu('epins/requestlist'); ?>">
-                        <i class="nav-icon fa fa-list"></i>
-                        <p>Activation Requests</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?= base_url('packages/'); ?>" class="nav-link <?= activate_menu('packages'); ?>">
-                        <i class="nav-icon fa fa-list"></i>
-                        <p>Packages</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?= base_url('notice/'); ?>" class="nav-link <?= activate_menu('settings/news'); ?>">
-                        <i class="nav-icon fa fa-list"></i>
-                        <p>Notice</p>
-                    </a>
-                </li>
-                <li class="nav-item has-treeview <?= activate_dropdown('wallet','li',['packages','funds','purchaselist']); ?>">
-                    <a href="#" class="nav-link <?= activate_dropdown('wallet','a',['packages','funds','purchaselist']); ?>">
-                        <i class="nav-icon fas fa-wallet"></i>
-                        <p>Wallet <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/depositrequestlist/"); ?>" class="nav-link <?= activate_menu('wallet/depositrequestlist'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p> Deposit Requests</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/approveddepositlist/"); ?>" class="nav-link <?= activate_menu('wallet/approveddepositlist'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Approved Deposits</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/memberwisedeposit/"); ?>" class="nav-link <?= activate_menu('wallet/memberwisedeposit'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Member Wise Deposits</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/requestlist/"); ?>" class="nav-link <?= activate_menu('wallet/requestlist'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Withdrawal Requests</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/approvedlist/"); ?>" class="nav-link <?= activate_menu('wallet/approvedlist'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Approved Payments</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/rejectedlist/"); ?>" class="nav-link <?= activate_menu('wallet/rejectedlist'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Rejected Payments</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="<?= base_url('wallet/funds/'); ?>" class="nav-link <?= activate_menu('wallet/funds'); ?>">
-                        <i class="nav-icon fa fa-money-bill"></i>
-                        <p>Fund Report</p>
-                    </a>
-                </li>
-                <li class="nav-item has-treeview <?= activate_dropdown('settings','li'); ?> d-none">
-                    <a href="#" class="nav-link <?= activate_dropdown('settings','a'); ?>">
-                        <i class="nav-icon fas fa-cogs"></i>
-                        <p>Settings <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?= base_url("settings/whatsappno/"); ?>" class="nav-link <?= activate_menu('settings/whatsappno'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>WhatsApp Number</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("settings/telegram/"); ?>" class="nav-link <?= activate_menu('settings/telegram'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Telegram Link</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("settings/qrimage/"); ?>" class="nav-link <?= activate_menu('settings/qrimage'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>QR Code Image</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item d-none">
-                    <a href="<?= base_url('settings/qrimage/'); ?>" class="nav-link <?= activate_menu('settings/qrimage'); ?>">
-                        <i class="nav-icon fa fa-qrcode"></i>
-                        <p>QR Code</p>
-                    </a>
-                </li>
-                <?php }else{ ?> 
-                <li class="nav-item has-treeview <?= activate_dropdown('wallet','li',['index','withdrawal','history','transfer','transferhistory']); ?>">
-                    <a href="#" class="nav-link <?= activate_dropdown('wallet','a',['index','withdrawal','history','transfer','transferhistory']); ?>">
-                        <i class="nav-icon fas fa-money-bill"></i>
-                        <p>Deposit <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/adddeposit/"); ?>" class="nav-link <?= activate_menu('wallet/adddeposit'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Add Deposit</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/depositlist/"); ?>" class="nav-link <?= activate_menu('wallet/depositlist'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Deposit List</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item has-treeview <?= activate_dropdown('wallet','li',['packages','funds','adddeposit','depositlist']); ?>">
-                    <a href="#" class="nav-link <?= activate_dropdown('wallet','a',['packages','funds','adddeposit','depositlist']); ?>">
-                        <i class="nav-icon fas fa-wallet"></i>
-                        <p>Wallet <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/"); ?>" class="nav-link <?= activate_menu('wallet'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>My Wallet</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/withdrawal/"); ?>" class="nav-link <?= activate_menu('wallet/withdrawal'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Withdrawal</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/history/"); ?>" class="nav-link <?= activate_menu('wallet/history'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Withdrawal History</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/transfer/"); ?>" class="nav-link <?= activate_menu('wallet/transfer'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Wallet Transfer</p>
-                            </a>
-                        </li>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?= base_url("wallet/transferhistory/"); ?>" class="nav-link <?= activate_menu('wallet/transferhistory'); ?>">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Wallet Received History</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <?php } ?>
-            </ul>
-        </nav>
-        <!-- /.sidebar-menu -->
-    </div>
-    <!-- /.sidebar -->
-</aside>
-
-<div class="content-wrapper">
-    <?php /*?><div class="overlay" id="loading">
-        <i class="fa fa-3x fa-refresh fa-spin"></i>
-    </div><?php */?>
-	<?php
-    	$this->load->view('includes/breadcrumb');
-	?>
-    <!-- Main content -->
-    
+						<li class="nav-item <?= activate_menu('home'); ?>">
+							<a href="<?= base_url('home/'); ?>" >
+								<i class="fas fa-home"></i>
+								<p>Home</p>
+							</a>
+						</li>
+						<li class="nav-section">
+							<span class="sidebar-mini-icon">
+								<i class="fa fa-ellipsis-h"></i>
+							</span>
+							<h4 class="text-section">Management</h4>
+						</li>
+                        <?php
+                            if($this->session->role=='admin'){
+                        ?>
+                        <?php
+                        $not=array();
+                        ?>
+						<li class="nav-item submenu <?= activate_dropdown('members','li',$not); ?>">
+							<a data-toggle="collapse" href="#members">
+								<i class="fas fa-users"></i>
+								<p>Members</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('members','div',$not); ?>" id="members">
+								<ul class="nav nav-collapse">
+									<li class="<?= activate_menu('members/memberlist'); ?>">
+										<a href="<?= base_url('members/memberlist/'); ?>">
+											<span class="sub-item">Downline Members</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('members/entertomember'); ?>">
+										<a href="<?= base_url('members/entertomember/'); ?>">
+											<span class="sub-item">Enter to Member</span>
+										</a>
+									</li>
+									<?php /*?><li class="<?= activate_menu('members/modify'); ?>">
+										<a href="<?= base_url('members/modify/'); ?>">
+											<span class="sub-item">Member Modify</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('members/changepassword'); ?>">
+										<a href="<?= base_url('members/changepassword/'); ?>">
+											<span class="sub-item">Change Password</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('members/coinrate'); ?>">
+										<a href="<?= base_url('members/coinrate/'); ?>">
+											<span class="sub-item">Coin Rate</span>
+										</a>
+									</li><?php */?>
+								</ul>
+							</div>
+						</li>
+                        <?php
+                        $not=array('index');
+                        ?>
+						<li class="nav-item submenu <?= activate_dropdown('home','li',$not); ?>">
+							<a data-toggle="collapse" href="#settings">
+								<i class="fas fa-user-lock"></i>
+								<p>Admin</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('home','div',$not); ?>" id="settings">
+								<ul class="nav nav-collapse">
+									<?php /*?><li class="">
+										<a href="<?= base_url(); ?>">
+											<span class="sub-item">Create Ultra Bouns Payout</span>
+										</a>
+									</li><?php */?>
+									<li class="<?= activate_menu('home/changepassword'); ?>">
+										<a href="<?= base_url('changepassword/'); ?>">
+											<span class="sub-item">Admin Change Password</span>
+										</a>
+									</li>
+									<?php /*?><li>
+										<a href="<?= base_url(); ?>">
+											<span class="sub-item">Setting</span>
+										</a>
+									</li><?php */?>
+								</ul>
+							</div>
+						</li>
+                        <?php
+                        $not=array();
+                        ?>
+						<li class="nav-item submenu <?= activate_dropdown('reports','li',$not); ?> d-none">
+							<a data-toggle="collapse" href="#reports">
+								<i class="fas fa-list-alt"></i>
+								<p>Report</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('reports','div',$not); ?>" id="reports">
+								<ul class="nav nav-collapse">
+									<li class="<?= activate_menu('reports'); ?>">
+										<a href="<?= base_url('reports/'); ?>">
+											<span class="sub-item">Member Joining Report</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('reports/memberwallet'); ?>">
+										<a href="<?= base_url('reports/memberwallet/'); ?>">
+											<span class="sub-item">Member Wallet</span>
+										</a>
+									</li>
+									<?php /*?><li class="<?= activate_menu('reports/topupreport'); ?>">
+										<a href="<?= base_url('reports/topupreport/'); ?>">
+											<span class="sub-item">Top Up Report</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('reports/ledger'); ?>">
+										<a href="<?= base_url('reports/ledger/'); ?>">
+											<span class="sub-item">Ledger Report</span>
+										</a>
+									</li><?php */?>
+								</ul>
+							</div>
+						</li>
+                        <?php
+                        $not=array();
+                        ?>
+						<?php /*?><li class="nav-item submenu <?= activate_dropdown('income','li',$not); ?>">
+							<a data-toggle="collapse" href="#income">
+								<i class="fas fa-money-bill-alt"></i>
+								<p>Payout</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('income','div',$not); ?>" id="income">
+								<ul class="nav nav-collapse">
+									<li class="<?= activate_menu('income/roiincome'); ?>">
+										<a href="<?= base_url('income/roiincome/'); ?>">
+											<span class="sub-item">ROI Income</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('income/levelincome'); ?>">
+										<a href="<?= base_url('income/levelincome/'); ?>">
+											<span class="sub-item">Level Income</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('income/levelincome'); ?>">
+										<a href="<?= base_url('income/levelincome/'); ?>">
+											<span class="sub-item">Level One Time Income</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('income/rankincome'); ?>">
+										<a href="<?= base_url('income/rankincome/'); ?>">
+											<span class="sub-item">Rank Income</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('income/royaltyincome'); ?>">
+										<a href="<?= base_url('income/royaltyincome/'); ?>">
+											<span class="sub-item">Royalty Income</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('income/ultraclubincome'); ?>">
+										<a href="<?= base_url('income/ultraclubincome/'); ?>">
+											<span class="sub-item">Ultra Club Income</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li><?php */?>
+                        <?php
+                        $not=array('transferfund','transferfundhistory','fundrequests','approvedfundrequests');
+                        ?>
+						<li class="nav-item submenu <?= activate_dropdown('wallet','li',$not); ?> d-none">
+							<a data-toggle="collapse" href="#wallet">
+								<i class="fas fa-money-check"></i>
+								<p>Withdrawal</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('wallet','div',$not); ?>" id="wallet">
+								<ul class="nav nav-collapse">
+									<li class="<?= activate_menu('wallet/withdrawalrequests'); ?>">
+										<a href="<?= base_url('wallet/withdrawalrequests/'); ?>">
+											<span class="sub-item">Withdrawal Requests</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('wallet/history'); ?>">
+										<a href="<?= base_url('wallet/history/'); ?>">
+											<span class="sub-item">History</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('wallet/unstakerequests'); ?>">
+										<a href="<?= base_url('wallet/unstakerequests/'); ?>">
+											<span class="sub-item">Unstake Requests</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('wallet/unstakehistory'); ?>">
+										<a href="<?= base_url('wallet/unstakehistory/'); ?>">
+											<span class="sub-item">Unstake History</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+                        <?php
+                        $not=array();
+                        ?>
+						<?php /*?><li class="nav-item submenu <?= activate_dropdown('support','li',$not); ?>">
+							<a data-toggle="collapse" href="#support">
+								<i class="fas fa-headset"></i>
+								<p>Support</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('support','div',$not); ?>" id="support">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="<?= base_url(); ?>">
+											<span class="sub-item">History</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li><?php */?>
+                        <?php 
+                            }
+                            else{
+                        ?>
+                        <?php
+                        $not=array();
+                        ?>
+						<li class="nav-item submenu <?= activate_dropdown('members','li',$not); ?>">
+							<a data-toggle="collapse" href="#members">
+								<i class="fas fa-users"></i>
+								<p>My Team</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('members','div',$not); ?>" id="members">
+								<ul class="nav nav-collapse">
+									<li class="<?= activate_menu('members/directmembers'); ?>">
+										<a href="<?= base_url('members/directmembers/'); ?>">
+											<span class="sub-item">Direct Members</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('members/memberlist'); ?>">
+										<a href="<?= base_url('members/memberlist/'); ?>">
+											<span class="sub-item">Downline Members</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('members/legbusiness'); ?>">
+										<a href="<?= base_url('members/legbusiness/'); ?>">
+											<span class="sub-item">Leg Business</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+                        <?php
+                        $not=array();
+                        ?>
+						<li class="nav-item submenu <?= activate_dropdown('deposit','li',$not); ?>">
+							<a data-toggle="collapse" href="#deposit">
+								<i class="fas fa-money-bill-alt"></i>
+								<p>Deposit</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('deposit','div',$not); ?>" id="deposit">
+								<ul class="nav nav-collapse">
+									<li class="<?= activate_menu('deposit'); ?>">
+										<a href="<?= base_url('deposit/'); ?>">
+											<span class="sub-item">Deposit</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('deposit/depositlist'); ?>">
+										<a href="<?= base_url('deposit/depositlist/'); ?>">
+											<span class="sub-item">Deposit List</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+                        <?php
+                        $not=array();
+                        ?>
+						<li class="nav-item submenu <?= activate_dropdown('income','li',$not); ?>">
+							<a data-toggle="collapse" href="#income">
+								<i class="fas fa-money-bill-alt"></i>
+								<p>Income</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('income','div',$not); ?>" id="income">
+								<ul class="nav nav-collapse">
+									<li class="<?= activate_menu('income/roiincome'); ?>">
+										<a href="<?= base_url('income/roiincome/'); ?>">
+											<span class="sub-item">ROI Income</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('income/levelincome'); ?>">
+										<a href="<?= base_url('income/levelincome/'); ?>">
+											<span class="sub-item">Level Income</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('income/matchingincome'); ?>">
+										<a href="<?= base_url('income/matchingincome/'); ?>">
+											<span class="sub-item">Matching Income</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('income/boosterincome'); ?>">
+										<a href="<?= base_url('income/boosterincome/'); ?>">
+											<span class="sub-item">Booster Income</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('income/clubincome'); ?>">
+										<a href="<?= base_url('income/clubincome/'); ?>">
+											<span class="sub-item">Club Income</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+                        <?php
+                        $not=array('addfund','transferfund','fundhistory');
+                        ?>
+						<li class="nav-item submenu <?= activate_dropdown('wallet','li',$not); ?>">
+							<a data-toggle="collapse" href="#wallet">
+								<i class="fas fa-money-check"></i>
+								<p>Withdrawal</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('wallet','div',$not); ?>" id="wallet">
+								<ul class="nav nav-collapse">
+									<li class="<?= activate_menu('wallet/withdrawal'); ?>">
+										<a href="<?= base_url('wallet/withdrawal/'); ?>">
+											<span class="sub-item">New</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('wallet/withdrawalhistory'); ?>">
+										<a href="<?= base_url('wallet/withdrawalhistory/'); ?>">
+											<span class="sub-item">History</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+                        <?php
+                        $not=array();
+                        ?>
+						<li class="nav-item submenu d-none <?= activate_dropdown('support','li',$not); ?>">
+							<a data-toggle="collapse" href="#support">
+								<i class="fas fa-headset"></i>
+								<p>Support</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse <?= activate_dropdown('support','div',$not); ?>" id="support">
+								<ul class="nav nav-collapse">
+									<li class="<?= activate_menu('support'); ?>">
+										<a href="<?= base_url('support/'); ?>">
+											<span class="sub-item">New</span>
+										</a>
+									</li>
+									<li class="<?= activate_menu('support/history'); ?>">
+										<a href="<?= base_url('support/history/'); ?>">
+											<span class="sub-item">History</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+                        <?php
+                            } 
+                        ?>
+					</ul>
+				</div>
+			</div>
+		</div>
+        

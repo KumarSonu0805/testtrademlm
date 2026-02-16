@@ -1,2 +1,0 @@
-# intratradex
-MLM Website

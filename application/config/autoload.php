@@ -58,7 +58,7 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-$autoload['libraries'] = array('session','template','database','email','amount','upload','alldata','dmt_request','CI_Debugger/debugger');
+$autoload['libraries'] = array('session','database','amount');
 
 /*
 | -------------------------------------------------------------------
@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('url','file','form','menu','string','redirect','slug','upload','image','common','email','xrazorpay','tree');
+$autoload['helper'] = array('url','form','file','menu','redirect','common','string','curl','home');
 
 /*
 | -------------------------------------------------------------------
@@ -132,5 +132,5 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-$autoload['model'] = array('Account_model'=>'account','Common_model'=>'common','Package_model'=>'package','Member_model'=>'member',
-                          'Wallet_model'=>'wallet','Epin_model'=>'epin');
+$autoload['model'] = array('Account_model'=>'account','Member_model'=>'member','Income_model'=>'income',
+                           'Setting_model'=>'setting');

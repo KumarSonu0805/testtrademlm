@@ -1,3 +1,0 @@
-UPDATE dc_epins SET `added_on` = DATE_SUB(`added_on`, INTERVAL 197 DAY) WHERE 1;
-
-UPDATE dc_epin_transfer SET `added_on` = DATE_SUB(`added_on`, INTERVAL 197 DAY) WHERE 1;

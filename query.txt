@@ -12,7 +12,7 @@ BEGIN
     SET ch = GivenID;
     WHILE ch > 1 DO
         SELECT IFNULL(refid,-1) INTO ch FROM
-        (SELECT refid FROM dc_members WHERE regid = ch) A;
+        (SELECT refid FROM bs_members WHERE regid = ch) A;
         IF ch > 1 THEN
             SET rv = CONCAT(rv,cm,ch);
             SET cm = ',';

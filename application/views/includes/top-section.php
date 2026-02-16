@@ -1,21 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title><?php echo $title.' | '.PROJECT_NAME; ?></title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Ionicons -->
-        <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-        <!-- iCheck -->
-        <link rel="stylesheet" href="<?php echo file_url("includes/plugins/icheck-bootstrap/icheck-bootstrap.min.css"); ?>">
-        <!-- Theme style -->
-        <link rel="stylesheet" href="<?php echo file_url("includes/dist/css/adminlte.min.css"); ?>">
-        <!-- overlayScrollbars -->
-        <link rel="stylesheet" href="<?php echo file_url("includes/plugins/overlayScrollbars/css/OverlayScrollbars.min.css"); ?>">
-        
-        <link rel="icon" type="image/png" href="<?= file_url('assets/images/fav.png'); ?>"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title><?= $title.' | '.PROJECT_NAME; ?></title>
+        <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+        <link rel="icon" href="<?= file_url('includes/img/icon.ico'); ?>" type="image/x-icon"/>
+
+        <!-- Fonts and icons -->
+        <script src="<?= file_url('includes/js/plugin/webfont/webfont.min.js'); ?>"></script>
+        <script>
+            WebFont.load({
+                google: {"families":["Lato:300,400,700,900"]},
+                custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['<?= file_url('includes/css/fonts.min.css'); ?>']},
+                active: function() {
+                    sessionStorage.fonts = true;
+                }
+            });
+        </script>
+
+        <!-- CSS Files -->
+        <link rel="stylesheet" href="<?= file_url('includes/css/bootstrap.min.css'); ?>">
+        <link rel="stylesheet" href="<?= file_url('includes/css/atlantis.min.css'); ?>">
+        <!-- CSS Just for demo purpose, don't include it in your project -->
+        <link rel="stylesheet" href="<?= file_url('includes/css/demo.css'); ?>">
         <?php
 			if(!empty($styles)){
 				foreach($styles as $key=>$style){
@@ -42,14 +49,12 @@
 				}
 			}
 		?>   
-        <!-- Custom style -->
-        <link rel="stylesheet" href="<?php echo file_url('includes/custom/custom.css'); ?>">     
-        <!-- Google Font: Source Sans Pro -->
-        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet"> 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<?php
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="<?= file_url('includes/custom/custom.css'); ?>">
+        <!--   Core JS Files   -->
+        <script src="<?= file_url('includes/js/core/jquery.3.2.1.min.js'); ?>"></script>
+        <?php
             if(!empty($top_script)){
                 foreach($top_script as $key=>$script){
                     if($key=="link"){
@@ -76,7 +81,16 @@
             }
         ?>
     </head>
-    <body class="hold-transition <?php if(!empty($body_class)){echo "$body_class ";}else{ echo "sidebar-mini layout-fixed text-sm "; } echo ACCENT_COLOR; ?> " >
-    	<?php if(empty($body_class)){?>
+    <?php
+        if($page_type=='auth'){
+    ?>
+    <body class="hold-transition login-page" data-background-color="<?= CONTENT_BG ?>">
+    <?php
+        }
+        else{
+    ?>
+    <body class="" data-background-color="<?= CONTENT_BG ?>">
         <div class="wrapper">
-        <?php } ?>
+    <?php
+        }
+    ?>

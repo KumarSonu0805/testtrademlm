@@ -1,120 +1,254 @@
 
-                <section class="content">
-                    <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><?php echo $title; ?></h3>
+                    </div>
+                    <div class="card-body">
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="card light-bg">
-                                    <div class="card-header">
-                                        <h3 class="card-title"><?= $title ?></h3>
-                                    </div>
-                                    <!-- /.card-header -->
-                                    <div class="card-body">
-
-                                        <div class="row">
-                                            <div class="col-md-12 table-responsive">
-                                                <table class="table table-striped data-table" id="bootstrap-data-table-export">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Sl No.</th>
-                                                            <th>Request Date</th>
-                                                            <th>Transaction Type</th>
-                                                            <th>Amount</th>
-                                                            <th>TDS</th>
-                                                            <th>Network Fees</th>
-                                                            <th>Payable Amount</th>
-                                                            <th>Payable Amount (INR)</th>
-                                                            <th>Approve Date</th>
-                                                            <th>Status</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <?php
-                                                            $members=$members;
-                                                            if(is_array($members)){$i=0;
-                                                                foreach($members as $member){
-                                                                    $i++;
-                                                                    $status="<span class='text-danger'>Not Approved</span>";
-                                                                    if($member['status']==1){
-                                                                        $status="<span class='text-success'>Approved</span>";
-                                                                    }elseif($member['status']==2 && $member['approve_date']===NULL){
-                                                                        $status="<span class='text-danger'>Request Cancelled</span>";
-                                                                    }elseif($member['status']==2){
-                                                                        $status="<span class='text-danger'>Request Rejected By Admin</span>";
-                                                                        if(!empty($member['reason'])){
-                                                                            $status.="<p class='text-primary mb-0 pb-0'>".$member['reason']."</p>";
-                                                                        }
-                                                                    }
-                                                        ?>
-                                                        <tr>
-                                                            <td><?= $i; ?></td>
-                                                            <td><?= date('d-m-Y',strtotime($member['date'])); ?></td>
-                                                            <td><?= $member['trans_type']; ?></td>
-                                                            <td><?= $this->amount->toDecimal($member['amount']); ?></td>
-                                                            <td><?= $this->amount->toDecimal($member['tds']); ?></td>
-                                                            <td><?= $this->amount->toDecimal($member['admin_charge']); ?></td>
-                                                            <td><?= $this->amount->toDecimal($member['payable']); ?></td>
-                                                            <td><?= $this->amount->toDecimal($member['payable']*CONV_RATE); ?></td>
-                                                            <td>
-                                                            <?php 
-                                                                if($member['approve_date']!='0000-00-00' && $member['approve_date']!==NULL && $member['status']!=2){
-                                                                    echo date('d-m-Y',strtotime($member['approve_date'])); 
-                                                                }
-                                                            ?>
-                                                            </td>
-                                                            <td><?= $status; ?></td>
-                                                            <td>
-                                                                <?php
-                                                                    if($member['status']==0){
-                                                                ?>
-                                                                <form action="<?= base_url('wallet/rejectpayout'); ?>" method="post" onSubmit="return validate('reject');" class="float-left">
-                                                                    <button type="submit" value="<?= $member['id'] ?>" name="request_id" class="btn btn-sm btn-danger">Cancel</button>
-                                                                </form>
-                                                                <?php
-                                                                    }
-                                                                ?>
-                                                            </td>
-                                                        </tr>
-                                                        <?php
-                                                                }
-                                                            }
-                                                        ?>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="col-12">   
+                                <div id="tabulator-table"></div>
                             </div>
                         </div>
                     </div>
-                </section>
-                <script>
-                    $(document).ready(function(e) {
-                        createDatatable();
-                    });
+                </div>
+    <script>
+	
+		$(document).ready(function(e) {
+            alertify.defaults.transition = "slide";
+            alertify.defaults.theme.ok = "btn btn-primary";
+            alertify.defaults.theme.cancel = "btn btn-danger";
+            alertify.defaults.theme.input = "form-control";
+            $('body').on('click','.approve-transfer',function(){
+                var id=$(this).val();
+                var recipient=$(this).data('address');
+                var amount=$(this).data('amount');
+                alertify.confirm("Approve Withdrawal Request", "Are you sure you want to Approve this Withdrawal Request?", 
+                    function(){ 
+                        sendDXC(id, recipient, amount);
+                    },
+                    function(){ alertify.error("Withdrawal Request Approval Cancelled!"); }
+                ).set('labels', {ok:'Approve Withdrawal Request'});
+            });
+            $('body').on('click','.reject',function(){
+                var id=$(this).val();
+                
+                alertify.prompt("Reject Withdrawal Request", "Enter Reason to Reject Withdrawal Request :", "", 
+                    function(evt, value){ 
+                        if (value.trim() === "") {  
+                            alertify.alert("Error","Reason is required!");
+                            return false;  // Prevent closing the prompt
+                        } 
+                        $.ajax({
+                            type:'post',
+                            url:"<?= base_url('wallet/rejectwithdrawal') ?>",
+                            data:{id:id,remarks:value},
+                            success:function(data){
+                                data=JSON.parse(data);
+                                if(data.status===true){
+                                    refreshTableData();
+                                    alertify.success(data.message);
+                                }
+                                else{
+                                    alertify.error(data.message);
+                                }
+                            }
+                        });  
+                    }, 
+                    function(){ alertify.error("Reject Withdrawal Request Cancelled"); }
+                ).set('labels', {ok:'Reject Withdrawal Request'})
+                .set('closable', false);
+            });
 
-                    function createDatatable(){
-                        $('#status').html('');
-                        table=$('#bootstrap-data-table-export').DataTable();
-                        table.columns('.select-filter').every(function(){
-                            var that = this;
-                            var pos=$('#status');
-                            // Create the select list and search operation
-                            var select = $('<select class="form-control" />').appendTo(pos).on('change',function(){
-                                            that.search("^" + $(this).val() + "$", true, false, true).draw();
-                                        });
-                                select.append('<option value=".+">All</option>');
-                            // Get the search data for the first column and add to the select list
-                            this.cache( 'search' ).sort().unique().each(function(d){
-                                    select.append($('<option value="'+d+'">'+d+'</option>') );
+            
+            var url="<?= base_url('wallet/history/?type=data'); ?>";
+            var columns=[
+                    { 
+                        title: "Sl.No.", 
+                        field: "serial", 
+                        type: "auto"
+                    },
+                    { 
+                        title: "Date", 
+                        field: "date",
+                        formatter: function(cell){
+                            let dateStr = cell.getValue(); // Y-m-d format
+                            let formattedDate = dateStr.split("-").reverse().join("-");
+                            return formattedDate;
+                        }
+                    },
+                    { title: "MID", field: "username" },
+                    { title: "Name", field: "name" },
+                    { title: "Address", field: "wallet_address", width:400 },
+                    { title: "Amount", field: "amount" , width:140,
+                        formatter: function(cell){
+                            let amount = Number(cell.getValue());
+                            amount=amount==Math.round(amount)?Math.round(amount):amount.toFixed(8);
+                            return amount+' DXC'
+                        }
+                    },
+                    { 
+                        title: "Approve On", 
+                        field: "approve_date", width:150,
+                        formatter: function(cell){
+                            let dateStr = cell.getValue(); // Y-m-d format
+                            let formattedDate = dateStr.split("-").reverse().join("-");
+                            return formattedDate;
+                        }
+                    },
+                    { title: "Transaction Hash", field: "response", width:600 },
+                ];
+
+            var pagination={
+                sizes:[10, 20, 50, 100]
+            }
+
+            var table=createTabulator('tabulator-table',url,columns,pagination);
+
+            function refreshTableData() {
+                table.replaceData(url);
+            }
+            $('body').on('keyup','#searchInput',function(){
+                let value = $(this).val().toLowerCase();
+                console.log(value);
+                table.setFilter(function(data) {
+                    return Object.values(data).some(field => 
+                        field !== null && field !== undefined && field.toString().toLowerCase().includes(value)
+                    );
+                });
+            });
+
+            $('body').on('click','#clearSearch',function(){
+                document.getElementById("searchInput").value = "";
+                table.clearFilter();
+            });
+
+            $('body').on('click','.view-screenshot',function(){
+                var src=$(this).data('src');
+                $('#preview').attr('src',src);
+                var myModal = new bootstrap.Modal(document.getElementById('modal-default'));
+                myModal.show();
+
+            });
+
+        });
+        
+        function approveWithdrawal(id,response){
+            
+            $.ajax({
+                type:'post',
+                url:"<?= base_url('wallet/approvewithdrawal') ?>",
+                data:{id:id,response:response},
+                success:function(data){
+                    data=JSON.parse(data);
+                    if(data.status===true){
+                        alertify.success(data.message);
+                        window.location.reload();
+                    }
+                    else{
+                        alertify.error(data.message);
+                    }
+                }
+            }); 
+        }
+        
+		function validate(){
+			if(!confirm("Confirm Activate this Member?")){
+				return false;
+			}
+		}
+	</script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <script src="<?= file_url('test/config-new.js'); ?>"></script>    
+    <script>
+        const BSC_CHAIN_ID = '0x38'; // 56 in decimal for Binance Smart Chain Mainnet
+        let web3 = new Web3(window.ethereum);
+        let userAddress;
+        const TOKEN_ABI = [
+          /* transfer(address,uint256) */
+          {
+            "constant": false,
+            "inputs": [
+              { "name": "_to",    "type": "address" },
+              { "name": "_value", "type": "uint256" }
+            ],
+            "name": "transfer",
+            "outputs": [{ "name": "", "type": "bool" }],
+            "type": "function"
+          },
+          /* decimals() – so we always convert amounts correctly */
+          {
+            "constant": true,
+            "inputs": [],
+            "name": "decimals",
+            "outputs": [{ "name": "", "type": "uint8" }],
+            "type": "function"
+          }
+        ];
+
+        // Connect to Wallet
+        async function connectWallet() {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    userAddress = accounts[0];
+                    //document.getElementById('walletAddress').textContent = userAddress;
+                    //document.getElementById('walletInfo').style.display = 'block';
+                    //document.getElementById('formContainer').style.display = 'block';
+
+                    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                    if (chainId !== BSC_CHAIN_ID) {
+                        try {
+                            await window.ethereum.request({
+                                method: 'wallet_switchEthereumChain',
+                                params: [{ chainId: BSC_CHAIN_ID }],
                             });
-                        });
-                        $('#member_id').on('keyup',function(){
-                            table.columns(1).search( this.value ).draw();
-                        });
+                            console.log('Switched to Binance Smart Chain');
+                        } catch (switchError) {
+                            console.error('Failed to switch to Binance Smart Chain:', switchError);
+                        }
                     }
-                    
-                    function validate(){
-                    }
-                </script>
+                } catch (error) {
+                    console.error('User denied wallet connection:', error);
+                }
+            } else {
+                alert('No Ethereum-compatible browser extension detected.');
+            }
+        }
+        async function sendDXC(id, recipient, amount) {
+            if (!web3.utils.isAddress(recipient) || Number(amount) <= 0) {
+                return alert("Please enter a valid recipient address and amount.");
+            }
+
+            try {
+                /* Initialise contract */
+                const token = new web3.eth.Contract(TOKEN_ABI, tokenAddress);
+
+                /* Get token decimals once so we convert properly */
+                const decimals = await token.methods.decimals().call();
+                const factor   = web3.utils.toBN(10).pow(web3.utils.toBN(decimals));
+
+                /* Convert human amount → smallest unit (uint256) */
+                const value = web3.utils.toBN(amount).mul(factor);   // BigNumber math
+
+                /* Send transaction */
+                const txReceipt = await token.methods
+                .transfer(recipient, value)
+                .send({ from: userAddress });
+
+                console.log("Transaction successful:", txReceipt);
+
+                /* OPTIONAL: notify your backend */
+                approveWithdrawal(id,txReceipt.transactionHash)
+                //alert("Withdrawal approved successfully!");
+            } catch (err) {
+                console.error("Transaction failed:", err);
+                alert("Transaction failed – check console for details.");
+            }
+        }
+        window.onload=function(){
+            connectWallet();
+        }
+    </script>
+    
+    	

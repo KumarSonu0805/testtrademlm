@@ -31,29 +31,20 @@
 				foreach($controller as $single){
 					if($class == $single){
 						if($type=='li'){
-							return 'menu-open';
+							return 'active';
 						}
 						else{
-							return 'active';
+							return 'show';
 						}
 					}
 				}
 			}
 			else{
 				if($type=='li'){
-					return ($class == $controller) ? 'menu-open' : '';
-				}else{
 					return ($class == $controller) ? 'active' : '';
+				}else{
+					return ($class == $controller) ? 'show' : '';
 				}
 			}
 		}
 	}
-	if(!function_exists('checkuri')){
-		function checkuri(){
-    		$CI = get_instance();
-			$default = array('name', 'gender', 'location', 'type', 'sort');
-			$array = $CI->uri->segment(4);
-			print_r($array);
-		}
-	}
-?>

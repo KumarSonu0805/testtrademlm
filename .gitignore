@@ -9,6 +9,7 @@ application/logs/*
 !application/*/.htaccess
 
 composer.lock
+tests/mocks/database/ci_test.sqlite
 
 user_guide_src/build/*
 user_guide_src/cilexer/build/*
@@ -29,26 +30,4 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 *.sublime-project
 /tests/tests/
 /tests/results/
-/assets/uploads/
-/assets/images/category/
-/assets/images/products/
-/assets/images/customers/
-/assets/images/vendors/
-/assets/images/payment/
-/assets/images/visits/
-/assets/images/employees/
-/assets/images/profile/
-/assets/images/banner/
-/assets/images/bill/
-/assets/images/banners/
-/assets/images/qrimage/
-/assets/images/wallet/
-/assets/attendance/daily/
-/orders.txt
-/disclaimer.txt
-/telegram.txt
-/whatsappno.txt
-/lib_updater.php
-/mylib/
-/lib_updater.php
-/mylib/
+access_timestamp.json
