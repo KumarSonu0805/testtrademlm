@@ -18,7 +18,7 @@ class Login extends MY_Controller {
             $data['member']=$member;
         }
         $data['title']="Login";
-        $this->template->load('auth','walletlogin',$data,'auth');       
+        $this->template->load('auth','login',$data,'auth');       
     }
     
     public function register(){
