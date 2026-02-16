@@ -92,46 +92,44 @@ if($startyear<$curyear){
 }
 defined('PROJECT_NAME')        OR define('PROJECT_NAME',"Green Trade"); 
 defined('OUR_BRAND')       	   OR define('OUR_BRAND',"");
-defined('SESSION_YEAR')        OR define('SESSION_YEAR',"$curyear");
-defined('SITE_SALT')           OR define('SITE_SALT',"Jio Empire Money");
-defined('TP')        		   OR define('TP',"dc_"); // Table Prefix
-defined('PRE')                 OR define('PRE',"<pre>");
-defined('NTYPE')               OR define('NTYPE',"toastr"); //Notification Type
-defined('REQUEST_LOG')         OR define('REQUEST_LOG',TRUE); //API Log
-defined('INVOICE_PREFIX')      OR define('INVOICE_PREFIX','RP'); //Prefix
-//////////////////////////////////////////////
-/*--------------Template Colors-------------*/
-//////////////////////////////////////////////
-defined('ACCENT_COLOR')        OR define('ACCENT_COLOR',"accent-warning");
-defined('NAVBAR_COLOR')        OR define('NAVBAR_COLOR',"navbar-success navbar-theme");
-defined('BRAND_COLOR')         OR define('BRAND_COLOR',"navbar-success");
-defined('SIDEBAR_COLOR')       OR define('SIDEBAR_COLOR',"sidebar-dark-warning text-white");
-//////////////////////////////////////////////
+defined('SITE_SALT')           OR define('SITE_SALT',"BIT Score");
+defined('TP')        		   OR define('TP',"bs_"); // Table Prefix
+defined('NTYPE')               OR define('NTYPE',"bootstrap"); //Notification Type
+defined('REQUEST_LOG')         OR define('REQUEST_LOG',FALSE); //API Log
+defined('LOGO')                OR define('LOGO','assets/images/logo.png'); 
+defined('LOGO_LIGHT')          OR define('LOGO_LIGHT','assets/images/logo.png'); 
 
-defined('ADMIN_CHARGE')           OR define('ADMIN_CHARGE',5); //ADMIN_CHARGE
-defined('TDS')                    OR define('TDS',5); //TDS
-defined('WITHDRAWAL_PERCENT')     OR define('WITHDRAWAL_PERCENT',30); //Withdrawal Percent
-defined('MIN_WITHDRAWAL')         OR define('MIN_WITHDRAWAL',20); //Min Withdrawal
-defined('ADMIN_EMAIL')            OR define('ADMIN_EMAIL',''); //Admin Email
-defined('CONV_RATE')              OR define('CONV_RATE',1); //CONV_RATE
-defined('TRANSFER_CHARGE')        OR define('TRANSFER_CHARGE',5); //Withdrawal Percent
-/////////////////////////////////////////////
+defined('LOGO_HEADER_BG')      OR define('LOGO_HEADER_BG','dark2'); 
+defined('HEADER_BG')           OR define('HEADER_BG','dark2'); 
+defined('SIDEBAR_BG')          OR define('SIDEBAR_BG','dark2'); 
+defined('CONTENT_BG')          OR define('CONTENT_BG','dark'); 
 
-defined('KEY_ID')               OR define('KEY_ID',''); //xRazorpay Key ID
-defined('KEY_SECRET')           OR define('KEY_SECRET',''); //xRazorpay Key Secret
-defined('ACCOUNT_NO')           OR define('ACCOUNT_NO',''); //xRazorpay Key Secret
+defined('DEDUCTION')           OR define('DEDUCTION',10); 
 
-/////////////////////////////////////////////
+if(isset($_SERVER['HTTP_HOST']) && ($_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='192.168.29.123')){
+    defined('MIN_BAL')              OR define('MIN_BAL',0); //Minimum
+    defined('MIN_DEPOSIT')          OR define('MIN_DEPOSIT',1); //Minimum
+    defined('MIN_WITHDRAW')         OR define('MIN_WITHDRAW',10); //Minimum
+    defined('ADMIN_ADDRESS')        OR define('ADMIN_ADDRESS','0x3599c27405c429bbe602649533ab9fc650fcd763'); //ADMIN Address
+    defined('WORK_ENV')             OR define('WORK_ENV','development'); 
+}
+else{
+    defined('MIN_BAL')              OR define('MIN_BAL',0); //Minimum
+    defined('MIN_DEPOSIT')          OR define('MIN_DEPOSIT',1); //Minimum
+    defined('MIN_WITHDRAW')         OR define('MIN_WITHDRAW',10); //Minimum
+    defined('ADMIN_ADDRESS')        OR define('ADMIN_ADDRESS',''); //ADMIN Address
+    defined('WORK_ENV')             OR define('WORK_ENV','production'); 
+}
 
 if(isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']=='localhost'){
 	defined('DB_HOST')		? null : define('DB_HOST','localhost');
 	defined('DB_USER')		? null : define('DB_USER', 'root');
-	defined('DB_PASSWORD')	? null : define('DB_PASSWORD','');
+	defined('DB_PASS')	    ? null : define('DB_PASS','');
 	defined('DB_NAME')		? null : define('DB_NAME','db_greentrade');
 }
 else{
 	defined('DB_HOST')      ? null : define('DB_HOST', '127.0.0.1');
 	defined('DB_USER')      ? null : define('DB_USER', 'u711511560_user_testmlm');
-	defined('DB_PASSWORD')  ? null : define('DB_PASSWORD', 'TestTradeMlm@123#$');
+	defined('DB_PASS')     ? null : define('DB_PASS', 'TestTradeMlm@123#$');
 	defined('DB_NAME')      ? null : define('DB_NAME', 'u711511560_db_testmlm');
 }
