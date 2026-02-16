@@ -1,6 +1,6 @@
 <?php
 class Member_model extends CI_Model{
-	var $user_prefix="BS";
+	var $user_prefix="GT";
 	var $random_user=true;
 	var $downline_table="members";
 	var $downline_order="refid";
