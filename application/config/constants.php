@@ -130,6 +130,6 @@ if(isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']=='localhost'){
 else{
 	defined('DB_HOST')      ? null : define('DB_HOST', '127.0.0.1');
 	defined('DB_USER')      ? null : define('DB_USER', 'u711511560_user_testmlm');
-	defined('DB_PASS')     ? null : define('DB_PASS', 'TestTradeMlm@#$');
+	defined('DB_PASS')     ? null : define('DB_PASS', 'TestTradeMlm@123#$');
 	defined('DB_NAME')      ? null : define('DB_NAME', 'u711511560_db_testmlm');
 }
