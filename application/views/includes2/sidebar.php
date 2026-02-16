@@ -91,21 +91,6 @@
          </div>
       </li>
       <li class="nav-item">
-         <a class="nav-link" href="<?= base_url('home/invite'); ?>">
-         <i class="fa-solid fa-th-large"></i> Invite
-         </a>
-      </li>
-      <li class="nav-item">
-         <a class="nav-link" href="<?= base_url('income/reward'); ?>">
-         <i class="fa-solid fa-gift"></i> Reward
-         </a>
-      </li>
-      <li class="nav-item">
-         <a class="nav-link" href="<?= base_url('income/club'); ?>">
-         <i class="fa-solid fa-tasks"></i> Club
-         </a>
-      </li>
-      <li class="nav-item">
          <a class="nav-link" data-bs-toggle="collapse" href="#walletMenu" role="button" aria-expanded="false" aria-controls="walletMenu">
          <i class="fa-solid fa-money-bill-transfer"></i> Wallet
          <i class="fas fa-chevron-down ms-auto"></i>

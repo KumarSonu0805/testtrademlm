@@ -127,9 +127,6 @@
                                    </ul>
                                 </div>
                              </li>
-                             <li class="nav-item"><a class="nav-link" href="<?= base_url('home/invite/'); ?>"><i class="fa-solid fa-th-large"></i> Invite</a></li>
-                             <li class="nav-item"><a class="nav-link" href="<?= base_url('income/reward/'); ?>"><i class="fa-solid fa-gift"></i> Reward</a></li>
-                             <li class="nav-item"><a class="nav-link" href="<?= base_url('home/club/'); ?>"><i class="fa-solid fa-tasks"></i> Club</a></li>
                              <li class="nav-item">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#mobileWalletMenu">
                                 <span><i class="fa-solid fa-money-bill-transfer"></i> Wallet</span>
