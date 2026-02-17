@@ -36,6 +36,14 @@ if(!empty($this->input->get('sponsor'))){
                   <label for="name" class="form-label">Mobile</label>
                   <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Mobile" pattern="[\d]{10}" maxlength="10" title="Enter valid 10-Digit Mobile No.">
                </div>
+               <div class="mb-3">
+                  <label for="name" class="form-label">Email</label>
+                  <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+               </div>
+               <div class="mb-3">
+                  <label for="name" class="form-label">Password</label>
+                  <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+               </div>
                 <div class="text-danger text-center mb-2"><?= $this->session->flashdata('reg_err_msg'); ?>
                 <div class="mb-3">
                   <div class="futureBtn">

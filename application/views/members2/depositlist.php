@@ -1,7 +1,6 @@
 
-                                    <div class="col-12">
-                                        <div class="datatable-card">
-                                            <h2><?= $title; ?></h2>
+                                        <div class="card">
+                                            <div class="card-header"><?= $title; ?></div>
                                             <div class="card-body">
                                                 <div class="row">
                                                     <div class="col-md-4">
@@ -17,6 +16,7 @@
                                                                         <th>Sl. No.</th>
                                                                         <th>Date</th>
                                                                         <th>Amount</th>
+                                                                        <th>Transaction Hash</th>
                                                                         <th>Status</th>
                                                                     </tr>
                                                                 </thead>
@@ -24,15 +24,19 @@
                                                                     <?php
                                                                         if(!empty($deposits)){ $i=0;
                                                                             foreach($deposits as $single){
-                                                                                $status='<small class="btn btn-block btn-sm btn-success">Active</small>';
-                                                                                if($single['status']==2){
-                                                                                    $status='<small class="btn btn-block btn-sm btn-primary">Complete</small>';
+                                                                                $status='<small class="btn btn-block btn-sm btn-warning">Pending</small>';
+                                                                                if($single['status']==1){
+                                                                                    $status='<small class="btn btn-block btn-sm btn-success">Approved</small>';
+                                                                                }
+                                                                                elseif($single['status']==2){
+                                                                                    $status='<small class="btn btn-block btn-sm btn-danger">Rejected</small>';
                                                                                 }
                                                                     ?>
                                                                     <tr>
                                                                         <td><?= ++$i; ?></td>
                                                                         <td><?= date('d-m-Y',strtotime($single['date'])); ?></td>
                                                                         <td><?= $single['amount']; ?></td>
+                                                                        <td><?= $single['tx_hash']; ?></td>
                                                                         <td><?= $status; ?></td>
                                                                     </tr>
                                                                     <?php
@@ -46,7 +50,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
                                     <script>
                                         $(document).ready(function(){
                                             //$('#table').dataTable();

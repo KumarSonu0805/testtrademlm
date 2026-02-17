@@ -126,6 +126,8 @@ class Login extends MY_Controller {
                 $referrer=$getreferrer['user'];
 				$userdata['name']=$data['name'];
 				$userdata['mobile']=$data['mobile'];
+				$userdata['email']=$data['email'];
+				$userdata['password']=$data['password'];
 				$userdata['role']="member";
 				$userdata['status']="1";
 				

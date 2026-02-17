@@ -590,8 +590,46 @@ class Member_model extends CI_Model{
 		$check=$this->db->get_where("investments",array("regid"=>$regid,"tx_hash"=>$data['tx_hash']))->num_rows();
 		if($check==0){
 			if($this->db->insert("investments",$data)){
+				return array('status'=>true,'message'=>'Investment Added Successfully');
+			}
+			else{
+                $err=$this->db->error();
+                return array("status"=>false,"message"=>$err['message']);
+			}
+		}
+		else{
+			return array("status"=>false,"message"=>"Deposit already Saved!");
+		}
+	}
+	
+	public function getdepositrequests($where=array(),$type='all'){
+		$this->db->select("t1.*,t2.username,t2.name");
+		$this->db->from('investments t1');
+		$this->db->join('users t2','t1.regid=t2.id');
+		$this->db->where($where);
+		$query=$this->db->get();
+		if($type=='all'){ $array=$query->result_array(); }
+		else{ $array=$query->row_array(); }
+		return $array;
+	}
+    
+	public function getdeposits($where=array(),$type='all'){
+		$this->db->select("t1.*");
+		$this->db->from('investments t1');
+		$this->db->where($where);
+		$query=$this->db->get();
+		if($type=='all'){ $array=$query->result_array(); }
+		else{ $array=$query->row_array(); }
+		return $array;
+	}
+    
+    public function savewalletdeposit($data){
+		$regid=$data['regid'];
+		$check=$this->db->get_where("deposits",array("regid"=>$regid,"tx_hash"=>$data['tx_hash']))->num_rows();
+		if($check==0){
+			if($this->db->insert("deposits",$data)){
                 $member=$this->member->getmemberdetails($regid);
-                if($this->db->get_where("investments",array("regid"=>$regid))->num_rows()==1 && $member['status']==0){
+                if($this->db->get_where("deposits",array("regid"=>$regid))->num_rows()>=1 && $member['status']==0){
                     $updata=array('package'=>$data['amount'],'activation_date'=>date('Y-m-d'),'activation_time'=>date('H:i:s'),'status'=>1);
                     $this->db->update('members',$updata,['regid'=>$regid]);
                 }
@@ -607,16 +645,17 @@ class Member_model extends CI_Model{
 		}
 	}
 	
-	public function getdeposits($where=array(),$type='all'){
-        $this->db->where(['t1.status!='=>0]);
+	public function getwalletdeposits($where=array(),$type='all'){
+        $this->db->where(['t1.auto'=>0,'t1.status!='=>0]);
 		$this->db->select("t1.*");
-		$this->db->from('investments t1');
+		$this->db->from('deposits t1');
 		$this->db->where($where);
 		$query=$this->db->get();
 		if($type=='all'){ $array=$query->result_array(); }
 		else{ $array=$query->row_array(); }
 		return $array;
 	}
+    
 	
     
 }
