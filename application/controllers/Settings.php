@@ -40,7 +40,7 @@ class Settings extends MY_Controller {
                     $data['value']='';
                 }
             }
-			//$result=$this->setting->updatesetting($data);
+			$result=$this->setting->updatesetting($data);
 			if($result['status']===true){
 				$this->session->set_flashdata("msg",$result['message']);
 			}
