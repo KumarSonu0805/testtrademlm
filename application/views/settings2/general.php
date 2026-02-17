@@ -28,7 +28,7 @@
                                                     <?php
                                                     if(!empty($settings)){ $i=0;
                                                         foreach($settings as $single){
-                                                            if(empty($single['value'])){ continue; }
+                                                            //if(empty($single['value'])){ continue; }
                                                             $i++;
                                                             $value=$single['value'];
                                                             if($single['type']=='Time'){

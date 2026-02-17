@@ -10,10 +10,27 @@ class Setting_model extends CI_Model{
         $datetime=date('Y-m-d H:i:s');
         $where=array();
         $data=array();
-        $where['name']='coin_rate';
+        $where['name']='admin_address';
         if($this->db->get_where('settings',$where)->num_rows()==0){
-            $data[]=array('name'=>'coin_rate','title'=>'Coin Rate','type'=>'Text',
-                      'value'=>'0','status'=>1,'added_on'=>$datetime,'updated_on'=>$datetime);
+            $data[]=array('name'=>'admin_address','title'=>'Admin Wallet Address','type'=>'',
+                      'value'=>'','status'=>1,'added_on'=>$datetime,'updated_on'=>$datetime);
+        }
+        $where['name']='qrcode';
+        if($this->db->get_where('settings',$where)->num_rows()==0){
+            $data[]=array('name'=>'qrcode','title'=>'QR Code','type'=>'',
+                      'value'=>'','status'=>1,'added_on'=>$datetime,'updated_on'=>$datetime);
+        }
+        for($i=1;$i<5;$i++){
+            $where['name']='admin_address'.$i;
+            if($this->db->get_where('settings',$where)->num_rows()==0){
+                $data[]=array('name'=>'admin_address'.$i,'title'=>'Admin Wallet Address','type'=>'',
+                          'value'=>'','status'=>1,'added_on'=>$datetime,'updated_on'=>$datetime);
+            }
+            $where['name']='qrcode'.$i;
+            if($this->db->get_where('settings',$where)->num_rows()==0){
+                $data[]=array('name'=>'qrcode'.$i,'title'=>'QR Code','type'=>'',
+                          'value'=>'','status'=>1,'added_on'=>$datetime,'updated_on'=>$datetime);
+            }
         }
         if(!empty($data)){
             $this->db->insert_batch('settings',$data);
