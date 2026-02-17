@@ -107,6 +107,11 @@
          else{
       ?>
       <li class="nav-item">
+         <a class="nav-link" href="<?= base_url('settings/') ?>">
+         <i class="fas fa-cogs"></i> Settings
+         </a>
+      </li>
+      <li class="nav-item">
          <a class="nav-link" data-bs-toggle="collapse" href="#walletMenu" role="button" aria-expanded="false" aria-controls="walletMenu">
          <i class="fa-solid fa-money-bill-transfer"></i> Wallet
          <i class="fas fa-chevron-down ms-auto"></i>
