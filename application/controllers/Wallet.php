@@ -150,7 +150,7 @@ class Wallet extends MY_Controller {
             $requests=$this->member->getwithdrawalrequest(['t1.regid'=>$user['id']]);
             $requests=array_map(function($item) {
                 if(isset($item['id'])){
-                    $item['id']=md5('withdrawal-request-id-'.$item['id']);
+                    //$item['id']=md5('withdrawal-request-id-'.$item['id']);
                 }
                 return $item;
             },$requests);

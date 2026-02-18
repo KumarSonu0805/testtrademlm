@@ -14,24 +14,16 @@ class Income extends MY_Controller {
         //$this->template->load('pages','home',$data);
     }
     
-    public function reward(){
-        $data=['title'=>'Reward'];
-        $data['user']=getuser();
-        $data['ranks']=$this->db->get('ranks')->result_array();
-        $this->template->load('income','reward',$data);
-    }
-    
-    public function club(){
-        $data=['title'=>'Clubs'];
-        $data['user']=getuser();
-        $data['ranks']=$this->db->get('clubs')->result_array();
-        $this->template->load('income','club',$data);
-    }
-    
-	public function directincome(){
-        $data['title']="Direct Income";
+    public function dailyincome(){
+        $data=['title'=>'Daily Income'];
         $data['tabulator']=true;
-        $this->template->load('income','directincome',$data);      
+        $this->template->load('income','dailyincome',$data);
+    }
+    
+	public function sponsorincome(){
+        $data['title']="Sponsor Income";
+        $data['tabulator']=true;
+        $this->template->load('income','sponsorincome',$data);      
     }
     
 	public function levelincome(){
@@ -40,29 +32,18 @@ class Income extends MY_Controller {
         $this->template->load('income','levelincome',$data);      
     }
     
-	public function roiincome(){
-        $data['title']="ROI Income";
+	public function salaryincome(){
+        $data['title']="Salary Income";
         $data['tabulator']=true;
-        $this->template->load('wallet','roiincome',$data);      
+        $this->template->load('income','salaryincome',$data);      
     }
     
-	public function rankincome(){
-        $data['title']="Rank Income";
+	public function rewardincome(){
+        $data['title']="Reward Income";
         $data['tabulator']=true;
-        $this->template->load('income','rankincome',$data);      
+        $this->template->load('income','rewardincome',$data);      
     }
     
-	public function royaltyincome(){
-        $data['title']="Royalty Income";
-        $data['tabulator']=true;
-        $this->template->load('income','royaltyincome',$data);      
-    }
-    
-	public function ultraclubincome(){
-        $data['title']="Ultra Club Income";
-        $data['tabulator']=true;
-        $this->template->load('wallet','ultraclubincome',$data);      
-    }
     
 	public function getincome(){
         $type=$this->input->get('type');

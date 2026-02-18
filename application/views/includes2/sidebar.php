@@ -115,6 +115,21 @@
          </div>
       </li>
       <li class="nav-item">
+         <a class="nav-link" data-bs-toggle="collapse" href="#incomeMenu" role="button" aria-expanded="false" aria-controls="incomeMenu">
+         <i class="fa-solid fa-money-bill-transfer"></i> Incomes
+         <i class="fas fa-chevron-down ms-auto"></i>
+         </a>
+         <div class="collapse" id="incomeMenu" data-bs-parent="#sidebarAccordion">
+            <ul class="nav flex-column ms-3">
+               <li class="nav-item"><a class="nav-link" href="<?= base_url('income/dailyincome/'); ?>">Daily Reward</a></li>
+               <li class="nav-item"><a class="nav-link" href="<?= base_url('income/sponsorincome/'); ?>">Sponsor Income</a></li>
+               <li class="nav-item"><a class="nav-link" href="<?= base_url('income/levelincome/'); ?>">Level Income</a></li>
+               <li class="nav-item"><a class="nav-link" href="<?= base_url('income/salaryincome/'); ?>">Salary Income</a></li>
+               <li class="nav-item"><a class="nav-link" href="<?= base_url('income/rewardincome/'); ?>">Reward Income</a></li>
+            </ul>
+         </div>
+      </li>
+      <li class="nav-item">
          <a class="nav-link" data-bs-toggle="collapse" href="#walletMenu" role="button" aria-expanded="false" aria-controls="walletMenu">
          <i class="fa-solid fa-money-bill-transfer"></i> Wallet
          <i class="fas fa-chevron-down ms-auto"></i>
