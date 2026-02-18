@@ -40,6 +40,18 @@
             </ul>
          </div>
       </li>
+      <li class="nav-item">
+         <a class="nav-link" data-bs-toggle="collapse" href="#membersMenu" role="button" aria-expanded="false" aria-controls="membersMenu">
+         <i class="fa-solid fa-users"></i> Members
+         <i class="fas fa-chevron-down ms-auto"></i>
+         </a>
+         <div class="collapse" id="membersMenu" data-bs-parent="#sidebarAccordion">
+            <ul class="nav flex-column ms-3">
+               <li class="nav-item"><a class="nav-link" href="<?= base_url('members/memberlist/'); ?>">Downline Members</a></li>
+               <li class="nav-item"><a class="nav-link" href="<?= base_url('members/directmembers/'); ?>">Direct Members</a></li>
+            </ul>
+         </div>
+      </li>
         <?php
             }
        else{

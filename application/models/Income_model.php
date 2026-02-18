@@ -5,7 +5,7 @@ class Income_model extends CI_Model{
     private $bonus=0.1;
     private $bonuspackage=array(100,500,1000,2000,5000);
     private $sponsor=0.05;
-    private $matching=0.002;
+    private $limit=3;
     private $capping=500;
     private $coinRate;
     private $active_ranks=array();
@@ -133,11 +133,22 @@ class Income_model extends CI_Model{
                                                                  'status'=>1])->result_array();
             
             
-            if(!empty($investments)){
+            if(!empty($investments) && date('D',strtotime($date))!='Sun'){
                 foreach($investments as $investment){
                     $inv_id=$investment['id'];
+                    $this->db->select_sum('amount');
+                    $added=$this->db->get_where('income',['regid'=>$regid,
+                                                          'inv_id'=>$inv_id,'type'=>'roiincome'])->unbuffered_row()->amount;
+                    $added=empty($added)?0:$added;
+                    $max=$this->limit*$investment['amount'];
                     $rate=$this->dailyRate;
                     $amount=$investment['amount']*$rate;
+                    if($added>=$max){
+                        $amount=0;
+                    }
+                    elseif($added+$amount>$max){
+                        $amount=$max-$added;
+                    }
                     if($amount>0){
                         $where=array('regid'=>$regid,'date'=>$date,'inv_id'=>$inv_id,'type'=>'roiincome','status'=>1);
                         if($this->db->get_where('income',$where)->num_rows()==0){
