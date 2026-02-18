@@ -231,7 +231,6 @@ class Income_model extends CI_Model{
                 }
             }
             
-            $team=2000;
             $amounts=$this->getReward($team);
             if(!empty($amounts)){
                 foreach($amounts as $amount){
