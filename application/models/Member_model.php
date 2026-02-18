@@ -5,6 +5,8 @@ class Member_model extends CI_Model{
 	var $downline_table="members";
 	var $downline_order="refid";
 	var $downline_parent="refid";
+    private $bonus=0.1;
+    private $bonuspackage=array(100,500,1000,2000,5000);
 	
 	function __construct(){
 		parent::__construct(); 

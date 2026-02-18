@@ -33,7 +33,7 @@
   		function getincome() {
     		$CI = get_instance();
             $user=getuser();
-            $incomes=array('roiincome'=>0,'level'=>0,'matching'=>0,'clubincome'=>0,'ultraclub'=>0);
+            $incomes=array('roiincome'=>0,'level'=>0,'direct'=>0,'salary'=>0,'reward'=>0);
             $CI->db->select('type,sum(amount) as amount');
             $CI->db->group_by('type');
             $query=$CI->db->get_where('income',['regid'=>$user['id']]);
@@ -52,11 +52,8 @@
             $index=array_search('reward',$types);
             $incomes['reward']=$index!==false?$array[$index]['amount']:0;
             
-            $index=array_search('royalty',$types);
-            $incomes['royalty']=$index!==false?$array[$index]['amount']:0;
-            
-            $index=array_search('ultraclub',$types);
-            $incomes['ultraclub']=$index!==false?$array[$index]['amount']:0;
+            $index=array_search('salary',$types);
+            $incomes['salary']=$index!==false?$array[$index]['amount']:0;
             
             $total=array_sum($incomes);
             $incomes['total']=$total;

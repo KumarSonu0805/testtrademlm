@@ -190,7 +190,7 @@ else{
                         </div>
                         <div class="col-lg-8">
                             <!-- value card -->
-                            <div class="value-card-section d-none">
+                            <div class="value-card-section">
                                 <div class="row justify-content-center">
                                     <div class="col-sm-6 mb-4">
                                         <div class="value-card">
@@ -215,39 +215,45 @@ else{
                                     <div class="col-sm-6 mb-4">
                                         <div class="value-card">
                                             <h5>ROI Income</h5>
-                                            <p><?= $this->amount->toDecimal($incomes['roiincome']); ?></p>
+                                            <p><?= $this->amount->toDecimal($incomes['roiincome'],true,4); ?></p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row justify-content-center">
+                                    <div class="col-sm-6 mb-4">
+                                        <div class="value-card">
+                                            <h5>Sponsor Income</h5>
+                                            <p><?= $this->amount->toDecimal($incomes['direct'],true,4); ?></p>
+                                        </div>
+                                    </div>
                                     <div class="col-sm-6 mb-4">
                                         <div class="value-card">
                                             <h5>Level Income</h5>
-                                            <p><?= $this->amount->toDecimal($incomes['level']); ?></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
-                                            <h5>Matching Income</h5>
-                                            <p><?= $this->amount->toDecimal($incomes['matching']); ?></p>
+                                            <p><?= $this->amount->toDecimal($incomes['level'],true,4); ?></p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col-sm-6 mb-4">
                                         <div class="value-card">
-                                            <h5>Club Income</h5>
-                                            <p><?= $this->amount->toDecimal($incomes['clubincome']); ?></p>
+                                            <h5>Salary Income</h5>
+                                            <p><?= $this->amount->toDecimal($incomes['salary']); ?></p>
                                         </div>
                                     </div>
+                                    <div class="col-sm-6 mb-4">
+                                        <div class="value-card">
+                                            <h5>Reward Income</h5>
+                                            <p><?= $this->amount->toDecimal($incomes['reward']); ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
                                     <div class="col-sm-6 mb-4">
                                         <div class="value-card">
                                             <h5>Total Income</h5>
                                             <p><?= $this->amount->toDecimal($incomes['total']); ?></p>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row justify-content-center">
                                     <div class="col-sm-6 mb-4">
                                         <div class="value-card">
                                             <h5>Withdrawal</h5>

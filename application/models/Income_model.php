@@ -1,8 +1,10 @@
 <?php
 class Income_model extends CI_Model{
     
-    private $dailyRate=0.004;
-    private $boosterRate=0.005;
+    private $dailyRate=0.01;
+    private $bonus=0.1;
+    private $bonuspackage=array(100,500,1000,2000,5000);
+    private $sponsor=0.05;
     private $matching=0.002;
     private $capping=500;
     private $coinRate;
@@ -14,14 +16,12 @@ class Income_model extends CI_Model{
 	}
     
     function getLevelPercentage($level,$direct) {
-        if ($level == 1 && $direct>=1) return 0.25;
-        if ($level == 2) return 0.20; 
-        if ($level == 3 && $direct>=2) return 0.12;
-        if ($level == 4 && $direct>=3) return 0.08;
-        if ($level == 5 && $direct>=4) return 0.05;
-        if ($level >= 6 && $level <= 10 && $direct>=5) return 0.02;
-        if ($level >= 11 && $level <= 20 && $direct>=9) return 0.01;
-        if ($level >= 21 && $level <= 30 && $direct>=10) return 0.01;
+        if ($level == 1 && $direct>=$level) return 0.20;
+        if ($level == 2 && $direct>=$level) return 0.10; 
+        if ($level == 3 && $direct>=$level) return 0.06;
+        if ($level == 4 && $direct>=$level) return 0.04;
+        if ($level == 5 && $direct>=$level) return 0.01;
+        if ($level >= 6 && $level <= 15 && $direct>=$level) return 0.05;
         return 0;
     }
 
@@ -84,26 +84,6 @@ class Income_model extends CI_Model{
         return false;
     }
     
-    public function checkbooster($user,$date=NULL){
-        $regid=$user['id'];
-        
-        $date=$date===NULL?date('Y-m-d'):$date;
-        $member=$this->member->getmemberdetails($regid);
-        if($member['status']==1 && $member['booster']==0){
-            $activation=$member['activation_date'].' '.$member['activation_time'];
-            $limit=date('Y-m-d H:i:s',strtotime($activation.' +7 days'));
-            $where=['refid'=>$regid,"CONCAT(activation_date, ' ', activation_time)<="=>$limit,'status'=>1];
-            $directs=$this->db->get_where('members',$where)->num_rows();
-            $deposits=$this->member->getdeposits(['t1.regid'=>$regid,'status'=>1]);
-            $deposit_amounts=!empty($deposits)?array_column($deposits,'amount'):array();
-            $deposit=array_sum($deposit_amounts);
-            
-            if($directs>=5 && $deposit>=5000){
-                $this->db->update('members',['booster'=>1],['regid'=>$regid]);
-            }
-        }
-    }
-    
     public function generateincome($user,$date=NULL){
         $regid=$user['id'];
         
@@ -130,7 +110,7 @@ class Income_model extends CI_Model{
             if(!empty($investments)){
                 foreach($investments as $investment){
                     $inv_id=$investment['id'];
-                    $rate=$booster===TRUE?$this->boosterRate:$this->dailyRate;
+                    $rate=$this->dailyRate;
                     $amount=$investment['amount']*$rate;
                     if($amount>0){
                         $where=array('regid'=>$regid,'date'=>$date,'inv_id'=>$inv_id,'type'=>'roiincome','status'=>1);
@@ -145,6 +125,44 @@ class Income_model extends CI_Model{
                 }
             }
             
+            //Direct Income
+            $subquery="SELECT member_id from ".TP."income where regid='$regid' and type='direct' and status='1'";
+            $where="t1.refid='$regid' and t1.status='1' and t1.activation_date<='$date' and 
+                    t1.regid not in ($subquery) and t2.status='1' and t1.activation_date>='2025-09-08'";
+            $this->db->select("t1.*,t2.id as inv_id,t2.amount");
+            $this->db->from("members t1");
+            $this->db->join("investments t2","t1.regid=t2.regid");
+            $this->db->where($where);
+            $getdirects=$this->db->get();
+            $directs=$getdirects->result_array();
+            if($this->input->get('test')=='test'){
+                echo $regid;
+                print_pre($directs);
+            }
+            if(!empty($directs)){
+                foreach($directs as $direct){
+                    $member_id=$direct['regid'];
+                    $ref_investment=$direct['amount'];
+                    $inv_id=$direct['inv_id'];
+                    $where=array('regid'=>$regid,'member_id'=>$member_id,'type'=>'direct','status'=>1);
+                    if($this->db->get_where('income',$where)->num_rows()==0){
+                        if($ref_investment>0){
+                            $rate=$this->sponsor;
+                            $amount=$ref_investment*$rate;
+                            if($amount>0){
+                                $data=array('regid'=>$regid,'date'=>$date,'type'=>'direct','member_id'=>$member_id,
+                                            'rate'=>$rate,'amount'=>$amount,'status'=>1,
+                                            'added_on'=>date('Y-m-d H:i:s'),'updated_on'=>date('Y-m-d H:i:s'));
+                                if($this->input->get('test')=='test'){
+                                    print_pre($data);
+                                }
+                                $this->db->insert('income',$data);
+                            }
+                        }
+                    }
+                    
+                }
+            }
             $directs=$this->db->get_where('members',['refid'=>$regid,'status'=>1])->num_rows();
             
             $levelmembers=$this->member->levelwisemembers($regid,$date,1);
@@ -172,57 +190,7 @@ class Income_model extends CI_Model{
                 }
             }
             
-            $legs=$this->get_leg_business($regid);
-            // Sort legs by business descending
-            usort($legs, function($a, $b) {
-                return $b['business'] <=> $a['business'];
-            });
-
-            if (count($legs) >= 2) {
-                $top_legs = array_slice($legs, 0, 2);
-                $leg_1=$top_legs[0]['business'];
-                $leg_2=$top_legs[1]['business'];
-                if($leg_1>0 && $leg_2>0){
-                    $this->db->select("(sum(amount/rate)+sum(capping/rate)) as amount");
-                    $prev=$this->db->get_where('income',['regid'=>$regid,'date<'=>$date,
-                                                         'type'=>'matching'])->unbuffered_row()->amount;
-                    $prev=$prev??0;
-                    $leg_1-=$prev;
-                    $leg_2-=$prev;
-                    
-                    $matching=$leg_2;
-                    if($matching>0){
-                        $amount=$matching*$this->matching;
-
-                        $this->db->select_sum("amount");
-                        $todays=$this->db->get_where('income',['regid'=>$regid,'date'=>$date,
-                                                               'type'=>'matching'])->unbuffered_row()->amount;
-                        $todays=$todays??0;
-
-                        $capping=0;
-                        if($amount>$this->capping){
-                            $capping=$amount-$this->capping;
-                            $amount=$this->capping-$todays;
-                            $amount+=$todays;
-                        }
-
-                        if($amount>0){
-                            $data=array('regid'=>$regid,'date'=>$date,'type'=>'matching','rate'=>$this->matching,
-                                        'capping'=>$capping,'amount'=>$amount,'status'=>1,'added_on'=>date('Y-m-d H:i:s'),
-                                        'updated_on'=>date('Y-m-d H:i:s'));
-                            $where=array('regid'=>$regid,'date'=>$date,'type'=>'matching','status'=>1);
-                            if($this->db->get_where('income',$where)->num_rows()==0){
-                                $this->db->insert('income',$data);
-                            }
-                            else{
-                                unset($data['added_on']);
-                                $this->db->update('income',$data,$where);
-                            }
-                        }
-                    }
-                }
-            }
-            
+            return false;
             $this->check_ranks($regid);
             //Reward Income
             $where="t1.regid='$regid' and t1.rank_id not in (SELECT rank_id from ".TP."income where regid='$regid' and type='reward')";
@@ -255,7 +223,6 @@ class Income_model extends CI_Model{
         $this->db->order_by('id desc');
         $users=$this->db->get_where('users',['id>'=>1])->result_array();
         foreach($users as $user){
-            $this->checkbooster($user,$date);
             $this->generateincome($user,$date);
         }
     }

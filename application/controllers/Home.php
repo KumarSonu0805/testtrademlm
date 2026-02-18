@@ -322,7 +322,7 @@ class Home extends MY_Controller {
     
     public function runquery(){
         $query=array(
-                    "ALTER TABLE `bs_member_ranks` CHANGE `rank` `rank` VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;"
+                    "ALTER TABLE `bs_investments` ADD `bonus` DECIMAL(10,2) NOT NULL AFTER `date`;"
         );
         foreach($query as $sql){
             if(!$this->db->query($sql)){

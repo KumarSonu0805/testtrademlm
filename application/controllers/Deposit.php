@@ -2,6 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Deposit extends MY_Controller {
+    private $bonus=0.1;
+    private $bonuspackage=array(100,500,1000,2000,5000);
 
     public function __construct() {
         parent::__construct();
@@ -54,6 +56,10 @@ class Deposit extends MY_Controller {
                 //create_image_thumb('.'.$upload['path'],'',TRUE,array("width"=>150,"height"=>150));
                 $data['screenshot']=$upload['path'];
                 //print_pre($data,true);
+                if(in_array($data['amount'],$this->bonuspackage)){
+                    $data['bonus']=$data['amount']*$this->bonus;
+                    $data['amount']+=$data['bonus'];
+                }
                 $result=$this->member->savedeposit($data);
                 if($result['status']===true){
                     $this->session->set_flashdata("msg",$result['message']);

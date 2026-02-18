@@ -15,6 +15,7 @@
                                                                     <tr>
                                                                         <th>Sl. No.</th>
                                                                         <th>Date</th>
+                                                                        <th>Bonus</th>
                                                                         <th>Amount</th>
                                                                         <th>Transaction Hash</th>
                                                                         <th>Status</th>
@@ -35,6 +36,7 @@
                                                                     <tr>
                                                                         <td><?= ++$i; ?></td>
                                                                         <td><?= date('d-m-Y',strtotime($single['date'])); ?></td>
+                                                                        <td><?= $single['bonus']; ?></td>
                                                                         <td><?= $single['amount']; ?></td>
                                                                         <td><?= $single['tx_hash']; ?></td>
                                                                         <td><?= $status; ?></td>
