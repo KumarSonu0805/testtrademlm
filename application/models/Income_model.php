@@ -129,7 +129,7 @@ class Income_model extends CI_Model{
             }
             
             
-            $investments=$this->db->get_where('investments',['regid'=>$regid,'date<='=>$date,
+            $investments=$this->db->get_where('investments',['regid'=>$regid,'date<'=>$date,
                                                                  'status'=>1])->result_array();
             
             
