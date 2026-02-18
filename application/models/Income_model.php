@@ -24,6 +24,31 @@ class Income_model extends CI_Model{
         if ($level >= 6 && $level <= 15 && $direct>=$level) return 0.05;
         return 0;
     }
+    
+    function getSalary($direct,$team) {
+        if ($direct>=50 && $team>=5000) return 2000;
+        if ($direct>=30 && $team>=1000) return 1000;
+        if ($direct>=20 && $team>=500) return 500;
+        if ($direct>=15 && $team>=200) return 300;
+        if ($direct>=10 && $team>=100) return 200;
+        if ($direct>=5 && $team>=50) return 100;
+        return 0;
+    }
+    
+    function getReward($team) {
+        if ($team>=100000) return 500000;
+        if ($team>=50000) return 200000;
+        if ($team>=10000) return 30000;
+        if ($team>=5000) return 10000;
+        if ($team>=3000) return 1500;
+        if ($team>=1000) return 800;
+        if ($team>=600) return 500;
+        if ($team>=300) return 400;
+        if ($team>=100) return 200;
+        if ($team>=50) return 100;
+        if ($team>=20) return 50;
+        return 0;
+    }
 
     public function get_leg_business($regid){
         $legs = [];
@@ -163,6 +188,7 @@ class Income_model extends CI_Model{
                     
                 }
             }
+            
             $directs=$this->db->get_where('members',['refid'=>$regid,'status'=>1])->num_rows();
             
             $levelmembers=$this->member->levelwisemembers($regid,$date,1);
@@ -190,6 +216,19 @@ class Income_model extends CI_Model{
                 }
             }
             
+            $team=!empty($levelmembers)?count($levelmembers):0;
+            
+            $month=date('m',strtotime($date));
+            $year=date('Y',strtotime($date));
+            $amount=$this->getSalary($directs,$team);
+            if($amount>0){
+                $where=array('regid'=>$regid,'month(date)'=>$month,'year(date)'=>$year,'type'=>'salary','status'=>1);
+                if($this->db->get_where('income',$where)->num_rows()==0){
+                    $data=array('regid'=>$regid,'date'=>$date,'type'=>'salary','amount'=>$amount,
+                                'status'=>1,'added_on'=>date('Y-m-d H:i:s'),'updated_on'=>date('Y-m-d H:i:s'));
+                    $this->db->insert('income',$data);
+                }
+            }
             return false;
             $this->check_ranks($regid);
             //Reward Income
