@@ -36,18 +36,19 @@ class Income_model extends CI_Model{
     }
     
     function getReward($team) {
-        if ($team>=100000) return 500000;
-        if ($team>=50000) return 200000;
-        if ($team>=10000) return 30000;
-        if ($team>=5000) return 10000;
-        if ($team>=3000) return 1500;
-        if ($team>=1000) return 800;
-        if ($team>=600) return 500;
-        if ($team>=300) return 400;
-        if ($team>=100) return 200;
-        if ($team>=50) return 100;
-        if ($team>=20) return 50;
-        return 0;
+        $result=array();
+        if ($team>=100000) $result[]= 500000;
+        if ($team>=50000) $result[]= 200000;
+        if ($team>=10000) $result[]= 30000;
+        if ($team>=5000) $result[]= 10000;
+        if ($team>=3000) $result[]= 1500;
+        if ($team>=1000) $result[]= 800;
+        if ($team>=600) $result[]= 500;
+        if ($team>=300) $result[]= 400;
+        if ($team>=100) $result[]= 200;
+        if ($team>=50) $result[]= 100;
+        if ($team>=20) $result[]= 50;
+        return $result;
     }
 
     public function get_leg_business($regid){
@@ -229,31 +230,20 @@ class Income_model extends CI_Model{
                     $this->db->insert('income',$data);
                 }
             }
-            return false;
-            $this->check_ranks($regid);
-            //Reward Income
-            $where="t1.regid='$regid' and t1.rank_id not in (SELECT rank_id from ".TP."income where regid='$regid' and type='reward')";
-            $this->db->select('t1.rank_id,t1.rank,t2.reward');
-            $this->db->from('member_ranks t1');
-            $this->db->join('ranks t2','t1.rank_id=t2.id');
-            $this->db->where($where);
-            $query=$this->db->get();
-            $pending=$query->result_array();
-            if(!empty($pending)){
-                foreach($pending as $single){
-                    if(!in_array($single['rank_id'],$this->active_ranks)){
-                        continue;
-                    }
-                    $amount=$single['reward'];
-                    if($amount>0){
-                        $data=array('regid'=>$regid,'date'=>$date,'type'=>'reward','rank_id'=>$single['rank_id'],
-                                    'amount'=>$amount,'status'=>1,'added_on'=>date('Y-m-d H:i:s'),
-                                    'updated_on'=>date('Y-m-d H:i:s'));
+            
+            $team=2000;
+            $amounts=$this->getReward($team);
+            if(!empty($amounts)){
+                foreach($amounts as $amount){
+                    $where=array('regid'=>$regid,'amount'=>$amount,'type'=>'reward','status'=>1);
+                    if($this->db->get_where('income',$where)->num_rows()==0){
+                        $data=array('regid'=>$regid,'date'=>$date,'type'=>'reward','amount'=>$amount,
+                                    'status'=>1,'added_on'=>date('Y-m-d H:i:s'),'updated_on'=>date('Y-m-d H:i:s'));
                         $this->db->insert('income',$data);
                     }
                 }
             }
-            
+            return false;
         }
     }
     
