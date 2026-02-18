@@ -18,6 +18,7 @@
                                                 <?php if($this->session->role=='admin'){ ?>
                                                 <th>Mobile</th>
                                                 <th>Amount</th>
+                                                <th>Password</th>
                                                 <?php
                                                     }
                                                 ?>
@@ -40,6 +41,11 @@
                                                 <?php if($this->session->role=='admin'){ ?>
                                                 <td><?= $single['mobile'] ?></td>
                                                 <td><?= $single['package'] ?></td>
+                                                <td>
+                                                    <a href="#" onClick="$(this).hide();$(this).parent().find('span').removeClass('d-none');">View Password</a>
+                                                    <span class="d-none"><?php echo $single['password']; ?></span>
+                                                    <span class="d-none text-danger" onClick="$(this).parent().find('span').addClass('d-none');$(this).parent().find('a').show();"><i class="fa fa-times"></i></span>
+                                                </td>
                                                 <?php
                                                     }
                                                 ?>
