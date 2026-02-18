@@ -64,7 +64,18 @@ $member['wallet_address']=empty($member['wallet_address'])?'':$member['wallet_ad
                                     ?>
                                     <small class="text-danger">*Note: Minimun withdrawal amount is $<?= MIN_WITHDRAW ?>!</small><br>
                                     <small class="text-danger">*Note: <?= DEDUCTION ?>% will be deducted from the withdrawal amount!</small><br>
+                                    <?php
+                                        if(date('D')==WITHDRAW_DAY){
+                                    ?>
                                     <button type="submit" class="btn btn-sm btn-success" name="requestwithdrawal" value="Request">Request Withdrawal</button>
+                                    <?php
+                                        }
+                                        else{
+                                    ?>
+                                    <h5 class="text-danger">*Note: Withdrawals are Active only one Monday!</h5><br>
+                                    <?php
+                                        }
+                                    ?>
                                 <?php 
                                         echo form_close(); 
                                     }

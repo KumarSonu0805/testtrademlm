@@ -104,13 +104,14 @@ defined('HEADER_BG')           OR define('HEADER_BG','dark2');
 defined('SIDEBAR_BG')          OR define('SIDEBAR_BG','dark2'); 
 defined('CONTENT_BG')          OR define('CONTENT_BG','dark'); 
 
-defined('DEDUCTION')           OR define('DEDUCTION',10); 
+defined('DEDUCTION')           OR define('DEDUCTION',5); 
 
 if(isset($_SERVER['HTTP_HOST']) && ($_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='192.168.29.123')){
     defined('MIN_BAL')              OR define('MIN_BAL',0); //Minimum
     defined('MIN_DEPOSIT')          OR define('MIN_DEPOSIT',1); //Minimum
     defined('MIN_WITHDRAW')         OR define('MIN_WITHDRAW',10); //Minimum
     defined('ADMIN_ADDRESS')        OR define('ADMIN_ADDRESS','0x3599c27405c429bbe602649533ab9fc650fcd763'); //ADMIN Address
+    defined('WITHDRAW_DAY')         OR define('WITHDRAW_DAY',date('D')); 
     defined('WORK_ENV')             OR define('WORK_ENV','development'); 
 }
 else{
@@ -118,6 +119,7 @@ else{
     defined('MIN_DEPOSIT')          OR define('MIN_DEPOSIT',50); //Minimum
     defined('MIN_WITHDRAW')         OR define('MIN_WITHDRAW',10); //Minimum
     defined('ADMIN_ADDRESS')        OR define('ADMIN_ADDRESS',''); //ADMIN Address
+    defined('WITHDRAW_DAY')         OR define('WITHDRAW_DAY','Mon'); 
     defined('WORK_ENV')             OR define('WORK_ENV','production'); 
 }
 
