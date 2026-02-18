@@ -108,11 +108,10 @@
                             return formattedDate;
                         }
                     },
-                    { title: "MID", field: "username" },
+                    { title: "Member ID", field: "username", width: 150 },
                     { title: "Name", field: "name" },
-                    { title: "UTR", field: "details" },
-                    { title: "Amount", field: "amount" },
-                    { title: "Transaction ID", field: "transaction_id" },
+                    { title: "Amount", field: "amount", width: 120 },
+                    { title: "Transaction hash", field: "tx_hash" },
                     { 
                         title: "Screenshot", 
                         field: "screenshot",

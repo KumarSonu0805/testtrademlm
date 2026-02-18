@@ -109,6 +109,18 @@
                                    </ul>
                                 </div>
                              </li>
+                             <li class="nav-item">
+                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#mobileDepositeMenu">
+                                <span><i class="fa-solid fa-money-bill-transfer"></i> Deposit</span>
+                                <i class="fas fa-chevron-down"></i>
+                                </a>
+                                <div class="collapse" id="mobileDepositeMenu" data-bs-parent="#mobileAccordion">
+                                   <ul class="nav flex-column ms-3">
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('wallet/fundrequests/'); ?>">Deposit Requests</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('wallet/approvedfundrequests/'); ?>">Approved Deposit Requests</a></li>
+                                   </ul>
+                                </div>
+                             </li>
                                 <?php
                                 }
                             ?>

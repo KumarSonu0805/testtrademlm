@@ -72,6 +72,18 @@
             </ul>
          </div>
       </li>
+      <li class="nav-item">
+         <a class="nav-link" data-bs-toggle="collapse" href="#depositeMenu" role="button" aria-expanded="false" aria-controls="depositeMenu">
+         <i class="fa-solid fa-money-bill-transfer"></i> Deposit
+         <i class="fas fa-chevron-down ms-auto"></i>
+         </a>
+         <div class="collapse" id="depositeMenu" data-bs-parent="#sidebarAccordion">
+            <ul class="nav flex-column ms-3">
+               <li class="nav-item"><a class="nav-link" href="<?= base_url('wallet/fundrequests/'); ?>">Deposit Requests</a></li>
+               <li class="nav-item"><a class="nav-link" href="<?= base_url('wallet/approvedfundrequests/'); ?>">Approved Deposit Requests</a></li>
+            </ul>
+         </div>
+      </li>
        <?php
        }
         ?>
