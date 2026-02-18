@@ -16,7 +16,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title">Transaction Screenshot</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
         </div>
@@ -24,7 +24,7 @@
           <img src="" alt="img" class="img-fluid" id="preview">
         </div>
         <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
       <!-- /.modal-content -->
@@ -110,6 +110,7 @@
                     },
                     { title: "Member ID", field: "username", width: 150 },
                     { title: "Name", field: "name" },
+                    { title: "Bonus", field: "bonus" },
                     { title: "Amount", field: "amount", width: 120 },
                     { title: "Transaction hash", field: "tx_hash" },
                     { 

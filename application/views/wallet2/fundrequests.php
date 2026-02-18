@@ -21,7 +21,7 @@
           <img src="" alt="img" class="img-fluid" id="preview">
         </div>
         <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-danger" id="close-modal" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id="close-modal" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
       <!-- /.modal-content -->
@@ -108,6 +108,7 @@
                     },
                     { title: "Member ID", field: "username", width: 150 },
                     { title: "Name", field: "name" },
+                    { title: "Bonus", field: "bonus" },
                     { title: "Amount", field: "amount", width: 120 },
                     { title: "Transaction hash", field: "tx_hash" },
                     { 
