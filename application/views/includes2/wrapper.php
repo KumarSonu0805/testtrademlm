@@ -65,7 +65,7 @@
                             <?php
                                 if($this->session->role=='member'){
                             ?>
-                             <li class="nav-item d-none">
+                             <li class="nav-item d-noe">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#mobileProfileMenu">
                                 <span><i class="fa-solid fa-user"></i> Profile</span>
                                 <i class="fas fa-chevron-down"></i>
