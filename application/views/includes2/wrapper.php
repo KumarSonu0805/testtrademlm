@@ -147,10 +147,10 @@
                                 <div class="collapse" id="mobileIncomeMenu" data-bs-parent="#mobileAccordion">
                                    <ul class="nav flex-column ms-3">
                                       <li class="nav-item"><a class="nav-link" href="<?= base_url('income/dailyincome/'); ?>">Daily Income</a></li>
-                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('deposit/sponsorincome/'); ?>">Sponsor Income</a></li>
-                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('deposit/levelincome/'); ?>">Level Income</a></li>
-                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('deposit/salaryincome/'); ?>">Salary Income</a></li>
-                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('deposit/rewardincome/'); ?>">Reward Income</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('income/sponsorincome/'); ?>">Sponsor Income</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('income/levelincome/'); ?>">Level Income</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('income/salaryincome/'); ?>">Salary Income</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('income/rewardincome/'); ?>">Reward Income</a></li>
                                    </ul>
                                 </div>
                              </li>
