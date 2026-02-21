@@ -50,7 +50,7 @@ class Income extends MY_Controller {
         $user=getuser();
         $incomes=$this->income->getincome(['t1.regid'=>$user['id'],'t1.type'=>$type]);
         $settings=$this->setting->getsettings(['name'=>'coin_rate'],'single');
-        $rate=$settings['value'];
+        //$rate=$settings['value'];
         if(!empty($incomes)){
             foreach($incomes as $key=>$income){
                 if($type=='reward' || $type=='royalty'){
