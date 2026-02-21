@@ -140,6 +140,21 @@
                                 </div>
                              </li>
                              <li class="nav-item">
+                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#mobileDepositeMenu">
+                                <span><i class="fa-solid fa-money-bill-transfer"></i> Incomes</span>
+                                <i class="fas fa-chevron-down"></i>
+                                </a>
+                                <div class="collapse" id="mobileDepositeMenu" data-bs-parent="#mobileAccordion">
+                                   <ul class="nav flex-column ms-3">
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('income/dailyincome/'); ?>">Daily Income</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('deposit/sponsorincome/'); ?>">Sponsor Income</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('deposit/levelincome/'); ?>">Level Income</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('deposit/salaryincome/'); ?>">Salary Income</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="<?= base_url('deposit/rewardincome/'); ?>">Reward Income</a></li>
+                                   </ul>
+                                </div>
+                             </li>
+                             <li class="nav-item">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#mobileWalletMenu">
                                 <span><i class="fa-solid fa-money-bill-transfer"></i> Wallet</span>
                                 <i class="fas fa-chevron-down"></i>

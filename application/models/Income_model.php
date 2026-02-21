@@ -163,9 +163,9 @@ class Income_model extends CI_Model{
             }
             
             //Direct Income
-            $subquery="SELECT member_id from ".TP."income where regid='$regid' and type='direct' and status='1'";
+            $subquery="SELECT inv_id from ".TP."income where regid='$regid' and type='direct' and status='1'";
             $where="t1.refid='$regid' and t1.status='1' and t1.activation_date<='$date' and 
-                    t1.regid not in ($subquery) and t2.status='1' and t1.activation_date>='2025-09-08'";
+                    t1.id not in ($subquery) and t2.status='1' and t1.activation_date>='2025-09-08'";
             $this->db->select("t1.*,t2.id as inv_id,t2.amount");
             $this->db->from("members t1");
             $this->db->join("investments t2","t1.regid=t2.regid");
@@ -181,14 +181,14 @@ class Income_model extends CI_Model{
                     $member_id=$direct['regid'];
                     $ref_investment=$direct['amount'];
                     $inv_id=$direct['inv_id'];
-                    $where=array('regid'=>$regid,'member_id'=>$member_id,'type'=>'direct','status'=>1);
+                    $where=array('regid'=>$regid,'inv_id'=>$inv_id,'member_id'=>$member_id,'type'=>'direct','status'=>1);
                     if($this->db->get_where('income',$where)->num_rows()==0){
                         if($ref_investment>0){
                             $rate=$this->sponsor;
                             $amount=$ref_investment*$rate;
                             if($amount>0){
-                                $data=array('regid'=>$regid,'date'=>$date,'type'=>'direct','member_id'=>$member_id,
-                                            'rate'=>$rate,'amount'=>$amount,'status'=>1,
+                                $data=array('regid'=>$regid,'date'=>$date,'type'=>'direct','inv_id'=>$inv_id,
+                                            'member_id'=>$member_id,'rate'=>$rate,'amount'=>$amount,'status'=>1,
                                             'added_on'=>date('Y-m-d H:i:s'),'updated_on'=>date('Y-m-d H:i:s'));
                                 if($this->input->get('test')=='test'){
                                     print_pre($data);
