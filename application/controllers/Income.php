@@ -51,16 +51,6 @@ class Income extends MY_Controller {
         $incomes=$this->income->getincome(['t1.regid'=>$user['id'],'t1.type'=>$type]);
         $settings=$this->setting->getsettings(['name'=>'coin_rate'],'single');
         //$rate=$settings['value'];
-        if(!empty($incomes)){
-            foreach($incomes as $key=>$income){
-                if($type=='reward' || $type=='royalty'){
-                    $incomes[$key]['amount_usdt']=round($income['amount']*$income['rate'],2);
-                }
-                else{
-                    $incomes[$key]['amount_usdt']=round($income['amount']*$rate,2);
-                }
-            }
-        }
         //$incomes=[];
         echo json_encode($incomes);  
     }
