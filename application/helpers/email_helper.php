@@ -11,7 +11,7 @@
 				$CI->load->helper('upload');
 			} 
             
-			$from="atal.prateek@tripledotss.com";
+			$from="greentrade290@gmail.com";
 			if(isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']=='localhost'){
 				ini_set('smtp','localhost');
 				ini_set('smtp_port',25);
