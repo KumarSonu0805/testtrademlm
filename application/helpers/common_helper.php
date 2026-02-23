@@ -60,6 +60,18 @@
         } 
 	}
 
+    if(!function_exists('teambusiness')) {
+  		function teambusiness($where=array()) {
+    		$CI = get_instance();
+            $user=getuser();
+            $where="t1.regid in (SELECT member_id from ".TP."level_members where regid='$user[id]')";
+            $deposits=$CI->member->getdeposits($where);
+            $deposit_amounts=!empty($deposits)?array_column($deposits,'amount'):array();
+            $deposit=array_sum($deposit_amounts);
+            return $deposit;
+        } 
+	}
+
 	if(!function_exists('getlevels')) {
   		function getlevels() {
     		$CI = get_instance();
