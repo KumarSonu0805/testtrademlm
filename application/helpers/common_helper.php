@@ -35,7 +35,13 @@
             if(!empty($where)){
                 $CI->db->where($where);
             }
-            $deposits=$CI->member->getdeposits(['t1.regid'=>$user['id'],'status'=>1]);
+            if($user['role']=='admin'){
+                $where=['status'=>1];
+            }
+            else{
+                $where=['t1.regid'=>$user['id'],'status'=>1];
+            }
+            $deposits=$CI->member->getdeposits($where);
             $deposit_amounts=!empty($deposits)?array_column($deposits,'amount'):array();
             $deposit=array_sum($deposit_amounts);
             return $deposit;

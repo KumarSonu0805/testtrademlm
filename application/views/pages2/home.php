@@ -34,11 +34,42 @@
       font-size: 1.2rem;
    }
 }
+    .value-card.bg-success{
+        background: rgba(var(--bs-success-rgb),var(--bs-bg-opacity))!important;
+    }
+    .value-card.bg-info{
+        background: rgba(var(--bs-info-rgb),var(--bs-bg-opacity))!important;
+    }
+    .value-card.bg-primary{
+        background: rgba(var(--bs-primary-rgb),var(--bs-bg-opacity))!important;
+    }
+    .value-card.bg-danger{
+        background: rgba(var(--bs-danger-rgb),var(--bs-bg-opacity))!important;
+    }
 </style>
             
 <?php
 if($this->session->role=='admin'){
 ?>
+                        <div class="col-lg-8">
+                            <!-- value card -->
+                            <div class="value-card-section">
+                                <div class="row justify-content-center">
+                                    <div class="col-sm-6 mb-4">
+                                        <div class="value-card bg-info">
+                                            <h5>Downline Members</h5>
+                                            <p><?= $this->amount->toDecimal(countdownline(),false); ?></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 mb-4">
+                                        <div class="value-card bg-success">
+                                            <h5>Total Business</h5>
+                                            <p><?= $this->amount->toDecimal(getdeposits(),false); ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     <div class="row row-card-no-pd d-none">
 						<div class="col-sm-6 col-md-3">
 							<div class="card card-stats card-round">
