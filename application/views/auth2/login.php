@@ -101,6 +101,7 @@
                         <a href="<?= base_url('register/'); ?>">Register Now</a>
                      </div>
                      <div class="col-lg-6">
+                        <a href="<?= base_url('forgotpassword/'); ?>">Forgot Password</a>
                      </div>
                   </div>
                </div>

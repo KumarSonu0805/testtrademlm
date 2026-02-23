@@ -25,20 +25,20 @@
 </style>
       <section class="loginsection">
          <div class="container">
-             <?= form_open('login/changepassword'); ?>
+             <?= form_open('login/validateotp'); ?>
             <div class="login-card">
                <div class="login-logo">
                   <img src="<?= file_url(LOGO) ?>" alt=" Logo" width="200" />
-                  <p>Reset OTP</p>
+                  <p>Enter OTP</p>
                </div>
                <div class="mb-3">
-                  <label for="memberid" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="password" name="password" placeholder="Password" required/>
+                  <label for="memberid" class="form-label">OTP</label>
+                  <input type="password" class="form-control" id="otp" name="otp" placeholder="OTP" required/>
                </div>
                     <div class="text-danger text-center mb-2"><?= $this->session->flashdata('logerr'); ?></div>
                 <div class="mb-3">
                   <div class="futureBtn">
-                     <button type="submit" name="changepassword">Reset Password</button>
+                     <button type="submit" name="submitotp">Submit OTP</button>
                   </div>
                </div>
             </div>

@@ -33,7 +33,7 @@ class Login extends MY_Controller {
         $this->template->load('auth','login',$data,'auth');       
     }
     
-    /*public function forgotpassword(){
+    public function forgotpassword(){
 		$this->session->unset_userdata("username");
         $data['title']="Forgot Password";
         $this->template->load('auth','forgotpassword',$data,'auth');       
@@ -49,7 +49,7 @@ class Login extends MY_Controller {
 		if($this->session->username===NULL){redirect('login/');}
         $data['title']="Change Password";
         $this->template->load('auth','resetpassword',$data,'auth');    
-    }*/
+    }
     
 	public function logout(){
 		if($this->session->user!==NULL){
@@ -206,24 +206,34 @@ class Login extends MY_Controller {
 		$this->session->set_userdata($data);
 	}
 	
-	public function validateUser(){
+	public function validateuser(){
 		if($this->input->post('forgotpassword')!==NULL){
 			$username=$this->input->post('username');
 			$result=$this->account->createotp(array("username"=>$username));
 			if($result['status']===true){
                 $result=$result['result'];
-				$otp=$result['otp'];
-				$verification_msg="$otp is your One Time Password to Reset password . This OTP is valid for 15 minutes.";
-				$smsdata=array("mobile"=>$result['mobile'],"message"=>$verification_msg);
-				
-				//send_sms($smsdata);
-				
-				$this->session->set_userdata("username",$username);
-				redirect('enter-otp/'.$otp);
+                if(empty($result['email'])){
+                    $this->session->set_flashdata("logerr","Email ID not added!");
+                    redirect('forgotpassword/');
+                }
+                else{
+                    $otp=$result['otp'];
+                    $this->load->helper('email');
+                    //passwordotp($result['email'],$otp);
+
+                    if(isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']=='localhost'){
+                        
+                    }
+                    else{
+                        $otp='';
+                    }
+                    $this->session->set_userdata("username",$username);
+                    redirect('enterotp/'.$otp);
+                }
 			}
 			else{
 				$this->session->set_flashdata("logerr","Username not valid!");
-				redirect('forgot-password/');
+				redirect('forgotpassword/');
 			}
 		}
 		else{
