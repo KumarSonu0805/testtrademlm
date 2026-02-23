@@ -305,7 +305,7 @@ else{
                                     </div>
                                     <div class="col-sm-6 mb-4">
                                         <div class="value-card bg-info">
-                                            <h5>Wallet Balance</h5>
+                                            <h5>Team Business</h5>
                                             <p><?= $this->amount->toDecimal(teambusiness ()); ?></p>
                                         </div>
                                     </div>
