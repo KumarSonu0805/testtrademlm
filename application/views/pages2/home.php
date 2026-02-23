@@ -143,6 +143,18 @@ else{
         font-size: 1rem;
         
     }
+    .value-card.bg-success{
+        background: rgba(var(--bs-success-rgb),var(--bs-bg-opacity))!important;
+    }
+    .value-card.bg-info{
+        background: rgba(var(--bs-info-rgb),var(--bs-bg-opacity))!important;
+    }
+    .value-card.bg-primary{
+        background: rgba(var(--bs-primary-rgb),var(--bs-bg-opacity))!important;
+    }
+    .value-card.bg-danger{
+        background: rgba(var(--bs-danger-rgb),var(--bs-bg-opacity))!important;
+    }
 </style>
                     <div class="row">
                         <div class="col-lg-4">
@@ -193,13 +205,13 @@ else{
                             <div class="value-card-section">
                                 <div class="row justify-content-center">
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-success">
                                             <h5>Total Deposits</h5>
                                             <p><?= $this->amount->toDecimal(getdeposits()); ?></p>
                                         </div>
                                     </div>
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-danger">
                                             <h5>Downline Members</h5>
                                             <p><?= $this->amount->toDecimal(countdownline(),false); ?></p>
                                         </div>
@@ -207,13 +219,13 @@ else{
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-info">
                                             <h5>Direct Members</h5>
                                             <p><?= $this->amount->toDecimal(countdirect(),false); ?></p>
                                         </div>
                                     </div>
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-primary">
                                             <h5>ROI Income</h5>
                                             <p><?= $this->amount->toDecimal($incomes['roiincome'],true,4); ?></p>
                                         </div>
@@ -221,13 +233,13 @@ else{
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-success">
                                             <h5>Sponsor Income</h5>
                                             <p><?= $this->amount->toDecimal($incomes['direct'],true,4); ?></p>
                                         </div>
                                     </div>
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-danger">
                                             <h5>Level Income</h5>
                                             <p><?= $this->amount->toDecimal($incomes['level'],true,4); ?></p>
                                         </div>
@@ -235,13 +247,13 @@ else{
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-primary">
                                             <h5>Salary Income</h5>
                                             <p><?= $this->amount->toDecimal($incomes['salary']); ?></p>
                                         </div>
                                     </div>
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-info">
                                             <h5>Reward Income</h5>
                                             <p><?= $this->amount->toDecimal($incomes['reward']); ?></p>
                                         </div>
@@ -249,19 +261,19 @@ else{
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-success">
                                             <h5>Total Income</h5>
                                             <p><?= $this->amount->toDecimal($incomes['total']); ?></p>
                                         </div>
                                     </div>
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-danger">
                                             <h5>Withdrawal</h5>
                                             <p><?= $this->amount->toDecimal($incomes['withdrawal']); ?></p>
                                         </div>
                                     </div>
                                     <div class="col-sm-6 mb-4">
-                                        <div class="value-card">
+                                        <div class="value-card bg-primary">
                                             <h5>Wallet Balance</h5>
                                             <p><?= $this->amount->toDecimal($incomes['wallet_balance']); ?></p>
                                         </div>
