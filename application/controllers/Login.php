@@ -219,7 +219,7 @@ class Login extends MY_Controller {
                 else{
                     $otp=$result['otp'];
                     $this->load->helper('email');
-                    //passwordotp($result['email'],$otp);
+                    passwordotp($result['email'],$otp);
 
                     if(isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']=='localhost'){
                         
