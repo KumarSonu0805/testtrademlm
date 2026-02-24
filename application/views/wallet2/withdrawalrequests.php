@@ -90,6 +90,7 @@
                     },
                     { title: "Member ID", field: "username" },
                     { title: "Member Name", field: "name" },
+                    { title: "Address", field: "wallet_address", width:400 },
                     { title: "Amount", field: "amount" ,
                         formatter: function(cell){
                             let amount = Number(cell.getValue());

@@ -112,7 +112,11 @@
                             <div class="card card-outline">
                                 <div class="card-body box-profile">
                                     <h3 class="profile-username text-center">Linked Wallet Address</h3>
-                                    <p class="address text-white"><?= $member['wallet_address']; ?></p>
+                                    <div class="address referral-link">
+                                        <span id="copyAddress" class="text-white"><?= $member['wallet_address']; ?></span>
+                                        <button type="button" class="btn copy-btn text-white p-1" onclick="copyAddress()"><i class="fa fa-copy"></i></button>
+                                    </div>
+                                    
                                     <button type="button" onClick="$('#wallet-div').removeClass('d-none');$('#name').focus()" class="btn btn-primary btn-block"><b>Edit Wallet Address</b></button>
                                 </div>
                             </div>
@@ -146,6 +150,22 @@
                         </div>
                     </div>
                 </div>
+        <script>
+            function copyAddress() {
+              // Select the link text
+              const linkElement = document.getElementById('copyAddress');
+              const linkText = linkElement.textContent || linkElement.innerText;
+
+              // Use navigator.clipboard.writeText for modern browsers
+              navigator.clipboard.writeText(linkText)
+                .then(() => {
+                  alert('Wallet Address copied!');
+                })
+                .catch((err) => {
+                  console.error('Unable to copy link', err);
+                });
+            }
+        </script>
                 <script>
 
                     function getPhoto(input){
