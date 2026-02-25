@@ -94,19 +94,8 @@
                                 <div class="collapse" id="mobileMemberMenu" data-bs-parent="#mobileAccordion">
                                    <ul class="nav flex-column ms-3">
                                     <li class="nav-item"><a class="nav-link" href="<?= base_url('members/memberlist/'); ?>">Downline Members</a></li>
-                                        <?php
-                                            if($this->session->role=='member'){
-                                        ?>
-                                    <li class="nav-item"><a class="nav-link" href="<?= base_url('members/directmembers/'); ?>">Direct Members</a></li>
                                     <li class="nav-item"><a class="nav-link" href="<?= base_url('members/downlinebusiness/'); ?>">Downline Business</a></li>
-                                        <?php
-                                            }
-                                            else{
-                                        ?>
                                     <li class="nav-item"><a class="nav-link" href="<?= base_url('members/entertomember/'); ?>">Enter To Member</a></li>
-                                        <?php
-                                            }
-                                        ?>
                                    </ul>
                                 </div>
                              </li>
@@ -137,6 +126,8 @@
                                    <ul class="nav flex-column ms-3">
                                     <li class="nav-item"><a class="nav-link" href="<?= base_url('members/memberlist/'); ?>">Downline Members</a></li>
                                     <li class="nav-item"><a class="nav-link" href="<?= base_url('members/directmembers/'); ?>">Direct Members</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="<?= base_url('members/activelist/'); ?>">Active Members</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="<?= base_url('members/inactivelist/'); ?>">In-Active Members</a></li>
                                     <li class="nav-item"><a class="nav-link" href="<?= base_url('members/downlinebusiness/'); ?>">Downline Business</a></li>
                                 </div>
                              </li>
