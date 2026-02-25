@@ -57,6 +57,26 @@ class Members extends MY_Controller {
         $this->template->load('members','memberlist',$data); 
     }
     
+    public function activelist(){
+        checklogin();
+        $data=['title'=>'Active Members'];
+        $data['datatable']=true;
+        $data['type']='active';
+        $user=getuser();
+        $data['members']=$this->member->getmembers($user['id']);
+        $this->template->load('members','memberlist',$data); 
+    }
+    
+    public function inactivelist(){
+        checklogin();
+        $data=['title'=>'In-Active Members'];
+        $data['datatable']=true;
+        $data['type']='in-active';
+        $user=getuser();
+        $data['members']=$this->member->getmembers($user['id']);
+        $this->template->load('members','memberlist',$data); 
+    }
+    
     public function downlinebusiness(){
         checklogin();
         $data=['title'=>'Downline Business'];

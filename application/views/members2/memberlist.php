@@ -30,6 +30,12 @@
                                                 if(!empty($members)){
                                                     $i=0;
                                                     foreach($members as $single){
+                                                        if($type=='active' && $single['status']==0){
+                                                            continue;
+                                                        }
+                                                        if($type=='in-active' && $single['status']==1){
+                                                            continue;
+                                                        }
                                             ?>
                                             <tr>
                                                 <td><?= ++$i; ?></td>
