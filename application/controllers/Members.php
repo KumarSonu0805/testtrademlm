@@ -57,6 +57,15 @@ class Members extends MY_Controller {
         $this->template->load('members','memberlist',$data); 
     }
     
+    public function downlinebusiness(){
+        checklogin();
+        $data=['title'=>'Downline Business'];
+        $data['datatable']=true;
+        $user=getuser();
+        $data['members']=$this->member->getmembers($user['id']);
+        $this->template->load('members','downlinebusiness',$data); 
+    }
+    
 	public function getmembers(){
         $members=array();
         $type=$this->input->get('type');

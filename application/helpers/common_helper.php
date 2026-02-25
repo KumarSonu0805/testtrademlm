@@ -29,9 +29,9 @@
 	}
 
 	if(!function_exists('getdeposits')) {
-  		function getdeposits($where=array()) {
+  		function getdeposits($where=array(),$user=NULL) {
     		$CI = get_instance();
-            $user=getuser();
+            $user=empty($user)?getuser():$user;
             if(!empty($where)){
                 $CI->db->where($where);
             }
