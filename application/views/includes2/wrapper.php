@@ -98,6 +98,7 @@
                                             if($this->session->role=='member'){
                                         ?>
                                     <li class="nav-item"><a class="nav-link" href="<?= base_url('members/directmembers/'); ?>">Direct Members</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="<?= base_url('members/downlinebusiness/'); ?>">Downline Business</a></li>
                                         <?php
                                             }
                                             else{
