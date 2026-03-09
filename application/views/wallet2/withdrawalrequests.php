@@ -90,7 +90,14 @@
                     },
                     { title: "Member ID", field: "username" },
                     { title: "Member Name", field: "name" },
-                    { title: "Address", field: "wallet_address", width:400 },
+                    { title: "Address", field: "wallet_address", width:500,
+                       formatter: function(cell) {
+                            let wallet_address = cell.getValue();
+                            let html =`<span class="w-address">${wallet_address}</span> `;
+                            html += `<button type="button" class="btn btn-sm btn-default px-3 copyAddress"><i class="fa fa-copy"></i></button>`;
+                            return html;
+                       } 
+                    },
                     { title: "Amount", field: "amount" ,
                         formatter: function(cell){
                             let amount = Number(cell.getValue());
@@ -179,10 +186,32 @@
             });
 
 
+            $('body').on('click','.copyAddress',function(){
+                $ele=$(this).prev();
+                console.log($ele.text());
+                copyAddress($ele.text());
+
+            });
         });
 		
 		function validate(){
 		}
 	</script>
     
+        <script>
+            function copyAddress(linkText) {
+              // Select the link text
+              //const linkElement = document.getElementById('copyLink');
+              //const linkText = linkElement.textContent || linkElement.innerText;
+
+              // Use navigator.clipboard.writeText for modern browsers
+              navigator.clipboard.writeText(linkText)
+                .then(() => {
+                  alert('Address copied!');
+                })
+                .catch((err) => {
+                  console.error('Unable to copy Address', err);
+                });
+            }
+        </script>
     	
