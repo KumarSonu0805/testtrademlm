@@ -9,13 +9,16 @@ class Login extends MY_Controller {
     }
     
     public function index(){
-        loginredirect();
+        //loginredirect();
 		$this->session->unset_userdata("username");
         if($this->session->flashdata('msg')=='Registered Successfully!'){
             $user=getuser();
             $member=$this->member->getmemberdetails($user['id']);
             $data['user']=$user;
             $data['member']=$member;
+        }
+        else{
+            loginredirect();
         }
         $data['title']="Login";
         $this->template->load('auth','login',$data,'auth');       

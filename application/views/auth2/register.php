@@ -42,7 +42,7 @@ if(!empty($this->input->get('sponsor'))){
                </div>
                <div class="mb-3">
                   <label for="name" class="form-label">Password</label>
-                  <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                  <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
                </div>
                 <div class="text-danger text-center mb-2"><?= $this->session->flashdata('reg_err_msg'); ?>
                 <div class="mb-3">
